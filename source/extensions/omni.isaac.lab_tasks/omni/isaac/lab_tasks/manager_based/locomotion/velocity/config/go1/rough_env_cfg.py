@@ -2,14 +2,30 @@
 # All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
+import math
+from dataclasses import MISSING
 import omni.isaac.lab.sim as sim_utils
 from omni.isaac.lab.managers import RewardTermCfg as RewTerm
+from omni.isaac.lab.managers import CurriculumTermCfg as CurrTerm
+from omni.isaac.lab.managers import EventTermCfg as EventTerm
+from omni.isaac.lab.managers import ObservationGroupCfg as ObsGroup
+from omni.isaac.lab.managers import ObservationTermCfg as ObsTerm
+from omni.isaac.lab.managers import SceneEntityCfg
+from omni.isaac.lab.managers import TerminationTermCfg as DoneTerm
 from omni.isaac.lab.scene import InteractiveSceneCfg
 from omni.isaac.lab.sensors import (
     RayCasterCameraCfg, 
     RayCaster,
+    RayCasterCfg,
+    ContactSensorCfg,
     patterns)
 from omni.isaac.lab.utils import configclass
+from omni.isaac.lab.terrains import TerrainImporterCfg
+from omni.isaac.lab.assets import ArticulationCfg, AssetBaseCfg
+
+from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR, ISAACLAB_NUCLEUS_DIR
+from omni.isaac.lab.terrains.config.rough import ROUGH_TERRAINS_CFG  # isort: skip
+
 
 from omni.isaac.lab_tasks.manager_based.locomotion.velocity.velocity_env_cfg import (
     LocomotionVelocityRoughEnvCfg,
@@ -31,14 +47,20 @@ from omni.isaac.lab_assets.unitree import UNITREE_GO1_CFG  # isort: skip
 
 @configclass
 class UnitreeGo1SceneCfg(MySceneCfg):
+
+    # robot: ArticulationCfg = MISSING
+    """Configuration for the terrain scene with a legged robot."""
     depth_camera = RayCasterCameraCfg(
-            prim_path="{ENV_REGEX_NS}/Robot/head_tilt_link/head_camera",
-            mesh_prim_paths=["/World/envs/envs_0/Cabinet"],
-            # mesh_prim_paths=["/World/GroundPlane"],
+            prim_path="{ENV_REGEX_NS}/Robot/trunk", # previously "{ENV_REGEX_NS}/Robot/head_tilt_link/head_camera"
+            mesh_prim_paths=["/World/ground"],
             update_period=0.1,
-            offset=RayCasterCameraCfg.OffsetCfg(pos=(0.055, 0.02, 0.0225), rot=(0,0,1,0)),
-            data_types=["distance_to_image_plane", "normals", "distance_to_camera"],
-            debug_vis=True,
+            attach_yaw_only=True,
+            offset=RayCasterCameraCfg.OffsetCfg(
+                pos=(0.055, 0.02, 0.0225), 
+                rot=(1,0,0,0), # previously (0, 0, 1, 0) in "ros" convention 
+                convention="world"),
+            data_types=["distance_to_image_plane"],
+            debug_vis=False,
             max_distance=10.0,
             pattern_cfg=patterns.PinholeCameraPatternCfg(
                 focal_length=24.0,
@@ -47,12 +69,13 @@ class UnitreeGo1SceneCfg(MySceneCfg):
                 width=640,
             ),
         )
-
+    
+    
 
 ##
 # MDP Settings
 ##
-
+@configclass
 class UnitreeGo1RewardsCfg(RewardsCfg):
     # TODO: migrate custom rewards from IsaacGym
     # rewards are written in omni.isaac.lab_tasks.manager_based.locomotion.velocity.mdp
@@ -60,7 +83,61 @@ class UnitreeGo1RewardsCfg(RewardsCfg):
     # reward_name = RewTerm(func = mdp.<reward_func>, 
     #                       weight = <reward_weight>,
     #                       params=mdp.<reward_params>)
-    pass
+    collision = RewTerm(func=mdp.collision, weight=-1.0)
+    feet_air_time = RewTerm(
+        func=mdp.feet_air_time, 
+        weight=0.01, 
+        params={
+            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*FOOT"),
+            "command_name": "base_velocity",
+            "threshold": 0.5,
+        },
+    )
+    stumble = RewTerm(func=mdp.stumble, weight=-1.0)
+    raibert = RewTerm(func=mdp.raibert_heuristic, weight=-1.0)
+    stand_still = RewTerm(func=mdp.stand_still, weight=-1.0)
+
+@configclass
+class UnitreeGo1ObservationsCfg(ObservationsCfg):
+    
+    @configclass
+    class PolicyCfg(ObsGroup):
+        # observation terms (order preserved)
+        base_lin_vel = ObsTerm(func=mdp.base_lin_vel, noise=Unoise(n_min=-0.1, n_max=0.1))
+        base_ang_vel = ObsTerm(func=mdp.base_ang_vel, noise=Unoise(n_min=-0.2, n_max=0.2))
+        projected_gravity = ObsTerm(
+            func=mdp.projected_gravity,
+            noise=Unoise(n_min=-0.05, n_max=0.05),
+        )
+        velocity_commands = ObsTerm(func=mdp.generated_commands, params={"command_name": "base_velocity"})
+        joint_pos = ObsTerm(func=mdp.joint_pos_rel, noise=Unoise(n_min=-0.01, n_max=0.01))
+        joint_vel = ObsTerm(func=mdp.joint_vel_rel, noise=Unoise(n_min=-1.5, n_max=1.5))
+        actions = ObsTerm(func=mdp.last_action)
+    
+    class CriticCfg(ObsGroup):
+        base_lin_vel = ObsTerm(func=mdp.base_lin_vel, noise=Unoise(n_min=-0.1, n_max=0.1))
+        base_ang_vel = ObsTerm(func=mdp.base_ang_vel, noise=Unoise(n_min=-0.2, n_max=0.2))
+        projected_gravity = ObsTerm(
+            func=mdp.projected_gravity,
+            noise=Unoise(n_min=-0.05, n_max=0.05),
+        )
+        velocity_commands = ObsTerm(func=mdp.generated_commands, params={"command_name": "base_velocity"})
+        joint_pos = ObsTerm(func=mdp.joint_pos_rel, noise=Unoise(n_min=-0.01, n_max=0.01))
+        joint_vel = ObsTerm(func=mdp.joint_vel_rel, noise=Unoise(n_min=-1.5, n_max=1.5))
+        actions = ObsTerm(func=mdp.last_action)
+        height_scan = ObsTerm(
+            func=mdp.height_scan,
+            params={"sensor_cfg": SceneEntityCfg("height_scanner")},
+            noise=Unoise(n_min=-0.1, n_max=0.1),
+            clip=(-1.0, 1.0),
+        )
+    def _post_init(self):
+        super().__post_init__()
+    
+    policy: PolicyCfg = PolicyCfg()
+    critic: CriticCfg = CriticCfg()
+
+
     
 class UnitreeGo1CommandsCfg(CommandsCfg):
     base_velocity = mdp.UniformVelocityCommandCfg(
@@ -78,7 +155,7 @@ class UnitreeGo1CommandsCfg(CommandsCfg):
 
 @configclass
 class UnitreeGo1RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
-    scene: UnitreeGo1SceneCfg = UnitreeGo1SceneCfg()
+    scene: UnitreeGo1SceneCfg = UnitreeGo1SceneCfg(num_envs=400, env_spacing=2.5)
     rewards : UnitreeGo1RewardsCfg = UnitreeGo1RewardsCfg()
 
     def __post_init__(self):
@@ -163,6 +240,7 @@ class UnitreeGo1RoughEnvCfg_PLAY(UnitreeGo1RoughEnvCfg):
             self.scene.terrain.terrain_generator.num_rows = 5
             self.scene.terrain.terrain_generator.num_cols = 5
             self.scene.terrain.terrain_generator.curriculum = False
+
 
         # disable randomization for play
         self.observations.policy.enable_corruption = False

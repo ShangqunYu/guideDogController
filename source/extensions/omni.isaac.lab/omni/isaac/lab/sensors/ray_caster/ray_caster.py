@@ -116,7 +116,8 @@ class RayCaster(SensorBase):
         if env_ids is None:
             env_ids = slice(None)
         # resample the drift
-        self.drift[env_ids].uniform_(*self.cfg.drift_range)
+        if hasattr(self, "drift"):
+            self.drift[env_ids].uniform_(*self.cfg.drift_range)
 
     """
     Implementation.
