@@ -144,7 +144,7 @@ class UnitreeGo1ObservationsCfg(ObservationsCfg):
             noise=Unoise(n_min=-0.1, n_max=0.1),
             clip=(-1.0, 1.0),
         )
-    def _post_init(self):
+    def __post_init__(self):
         super().__post_init__()
     
     policy: PolicyCfg = PolicyCfg()
@@ -170,7 +170,7 @@ class UnitreeGo1CommandsCfg(CommandsCfg):
 class UnitreeGo1RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
     scene: UnitreeGo1SceneCfg = UnitreeGo1SceneCfg(num_envs=300, env_spacing=2.5)
     rewards : UnitreeGo1RewardsCfg = UnitreeGo1RewardsCfg()
-
+    observations: UnitreeGo1ObservationsCfg = UnitreeGo1ObservationsCfg()
     def __post_init__(self):
         # post init of parent
         super().__post_init__()

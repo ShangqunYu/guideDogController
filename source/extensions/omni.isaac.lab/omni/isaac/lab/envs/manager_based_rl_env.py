@@ -24,9 +24,6 @@ from .common import VecEnvStepReturn
 from .manager_based_env import ManagerBasedEnv
 from .manager_based_rl_env_cfg import ManagerBasedRLEnvCfg
 
-import omni.replicator.core as rep
-
-
 class ManagerBasedRLEnv(ManagerBasedEnv, gym.Env):
     """The superclass for the manager-based workflow reinforcement learning-based environments.
 
@@ -80,7 +77,7 @@ class ManagerBasedRLEnv(ManagerBasedEnv, gym.Env):
         super().__init__(cfg=cfg)
         # store the render mode
         self.render_mode = render_mode
-
+            
         # initialize data and constants
         # -- counter for curriculum
         self.common_step_counter = 0
@@ -187,6 +184,8 @@ class ManagerBasedRLEnv(ManagerBasedEnv, gym.Env):
 
             # depth camera rendering. Comment out during training.
             if "depth_camera" in self.scene.sensors and self.cfg.depth_camera_render:
+                import omni.replicator.core as rep
+                
                 file_dir = os.path.dirname(os.path.realpath(__file__))
                 temp_dir = os.path.join(file_dir, "output", "camera", "throughput")
                 os.makedirs(temp_dir, exist_ok=True)
