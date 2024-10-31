@@ -58,3 +58,6 @@ _build
 **/logs/*
 **/recordings/*
 _isaac_sim
+
+# Test Files
+trung_test/

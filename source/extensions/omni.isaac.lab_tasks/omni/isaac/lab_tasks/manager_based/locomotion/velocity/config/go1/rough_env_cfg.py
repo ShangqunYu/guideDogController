@@ -22,6 +22,7 @@ from omni.isaac.lab.sensors import (
 from omni.isaac.lab.utils import configclass
 from omni.isaac.lab.terrains import TerrainImporterCfg
 from omni.isaac.lab.assets import ArticulationCfg, AssetBaseCfg
+from omni.isaac.lab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 
 from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR, ISAACLAB_NUCLEUS_DIR
 from omni.isaac.lab.terrains.config.rough import ROUGH_TERRAINS_CFG  # isort: skip
@@ -56,7 +57,7 @@ class UnitreeGo1SceneCfg(MySceneCfg):
             update_period=0.1,
             attach_yaw_only=True,
             offset=RayCasterCameraCfg.OffsetCfg(
-                pos=(0.055, 0.02, 0.0225), 
+                pos=(0.245+0.027, 0.0075, 0.072+0.02),  # imported from Isaacgym
                 rot=(1,0,0,0), # previously (0, 0, 1, 0) in "ros" convention 
                 convention="world"),
             data_types=["distance_to_image_plane"],
@@ -65,8 +66,8 @@ class UnitreeGo1SceneCfg(MySceneCfg):
             pattern_cfg=patterns.PinholeCameraPatternCfg(
                 focal_length=24.0,
                 horizontal_aperture=20.955,
-                height=480,
-                width=640,
+                height=58,
+                width=87,
             ),
         )
     
@@ -83,19 +84,31 @@ class UnitreeGo1RewardsCfg(RewardsCfg):
     # reward_name = RewTerm(func = mdp.<reward_func>, 
     #                       weight = <reward_weight>,
     #                       params=mdp.<reward_params>)
-    collision = RewTerm(func=mdp.collision, weight=-1.0)
-    feet_air_time = RewTerm(
-        func=mdp.feet_air_time, 
-        weight=0.01, 
-        params={
-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*FOOT"),
-            "command_name": "base_velocity",
-            "threshold": 0.5,
-        },
-    )
-    stumble = RewTerm(func=mdp.stumble, weight=-1.0)
-    raibert = RewTerm(func=mdp.raibert_heuristic, weight=-1.0)
-    stand_still = RewTerm(func=mdp.stand_still, weight=-1.0)
+    pass
+    # collision = RewTerm(
+    #     func=mdp.collision, 
+    #     weight=-1.0, 
+    #     params={"sensor_cfg": SceneEntityCfg("contact_forces")}
+    # )
+    
+    # feet_air_time = RewTerm(
+    #     func=mdp.feet_air_time, 
+    #     weight=0.01, 
+    #     params={
+    #         "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot"),
+    #         "command_name": "base_velocity",
+    #         "threshold": 0.5,
+    #     },
+    # )
+    # stumble = RewTerm(
+    #     func=mdp.stumble, 
+    #     weight=-1.0,
+    #     params={
+    #         "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*foot"),
+    #     }
+    # )
+    # raibert = RewTerm(func=mdp.raibert_heuristic, weight=-1.0)
+    # stand_still = RewTerm(func=mdp.stand_still, weight=-1.0)
 
 @configclass
 class UnitreeGo1ObservationsCfg(ObservationsCfg):
@@ -155,12 +168,15 @@ class UnitreeGo1CommandsCfg(CommandsCfg):
 
 @configclass
 class UnitreeGo1RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
-    scene: UnitreeGo1SceneCfg = UnitreeGo1SceneCfg(num_envs=400, env_spacing=2.5)
+    scene: UnitreeGo1SceneCfg = UnitreeGo1SceneCfg(num_envs=300, env_spacing=2.5)
     rewards : UnitreeGo1RewardsCfg = UnitreeGo1RewardsCfg()
 
     def __post_init__(self):
         # post init of parent
         super().__post_init__()
+
+        # whether to render camera
+        self.depth_camera_render = False
 
         self.scene.robot = UNITREE_GO1_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
         self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/trunk"
@@ -225,10 +241,14 @@ class UnitreeGo1CommandsCfg_PLAY(CommandsCfg):
 
 @configclass
 class UnitreeGo1RoughEnvCfg_PLAY(UnitreeGo1RoughEnvCfg):
+    scene: UnitreeGo1SceneCfg = UnitreeGo1SceneCfg(num_envs=10, env_spacing=2.5)
     commands: UnitreeGo1CommandsCfg_PLAY = UnitreeGo1CommandsCfg_PLAY()
     def __post_init__(self):
         # post init of parent
         super().__post_init__()
+
+        # enabling rendering depth camera:
+        self.depth_camera_render = True
 
         # make a smaller scene for play
         self.scene.num_envs = 50

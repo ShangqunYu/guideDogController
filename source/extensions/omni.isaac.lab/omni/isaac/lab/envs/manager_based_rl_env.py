@@ -6,6 +6,7 @@
 # needed to import for allowing type-hinting: np.ndarray | None
 from __future__ import annotations
 
+import os
 import gymnasium as gym
 import math
 import numpy as np
@@ -16,10 +17,14 @@ from typing import Any, ClassVar
 from omni.isaac.version import get_version
 
 from omni.isaac.lab.managers import CommandManager, CurriculumManager, RewardManager, TerminationManager
+from omni.isaac.lab.utils import convert_dict_to_backend
+
 
 from .common import VecEnvStepReturn
 from .manager_based_env import ManagerBasedEnv
 from .manager_based_rl_env_cfg import ManagerBasedRLEnvCfg
+
+import omni.replicator.core as rep
 
 
 class ManagerBasedRLEnv(ManagerBasedEnv, gym.Env):
@@ -178,7 +183,27 @@ class ManagerBasedRLEnv(ManagerBasedEnv, gym.Env):
                 self.sim.render()
             # update buffers at sim dt
             self.scene.update(dt=self.physics_dt)
+            
 
+            # depth camera rendering. Comment out during training.
+            if "depth_camera" in self.scene.sensors and self.cfg.depth_camera_render:
+                file_dir = os.path.dirname(os.path.realpath(__file__))
+                temp_dir = os.path.join(file_dir, "output", "camera", "throughput")
+                os.makedirs(temp_dir, exist_ok=True)
+                # Create replicator writer
+                rep_writer = rep.BasicWriter(output_dir=temp_dir, frame_padding=3)
+                # get the image and write:
+                camera = self.scene.sensors["depth_camera"]
+                rep_output = {"annotators": {}}
+                camera_data = convert_dict_to_backend(camera.data.output[0].to_dict(), backend="numpy")
+                for key, data, info in zip(camera_data.keys(), camera_data.values(), camera.data.info[0].values()):
+                    if info is not None:
+                        rep_output["annotators"][key] = {"render_product": {"data": data, **info}}
+                    else:
+                        rep_output["annotators"][key] = {"render_product": {"data": data}}
+                # Save images
+                rep_output["trigger_outputs"] = {"on_time": camera.frame[0]}
+                rep_writer.write(rep_output)
         # post-step:
         # -- update env counters (used for curriculum generation)
         self.episode_length_buf += 1  # step in current episode (per env)
