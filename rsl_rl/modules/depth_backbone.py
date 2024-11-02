@@ -4,12 +4,16 @@ import sys
 import torchvision
 
 class RecurrentDepthBackbone(nn.Module):
-    def __init__(self, base_backbone, env_cfg, depth_encoder_cfg) -> None:
+    def __init__(
+            self, 
+            base_backbone, 
+            num_actor_obs, 
+            depth_encoder_cfg) -> None:
         super().__init__()
         activation = nn.ELU()
         last_activation = nn.Tanh()
         self.base_backbone = base_backbone
-        if env_cfg == None:
+        if num_actor_obs == None:
             self.combination_mlp = nn.Sequential(
                                     nn.Linear(32 + 53, 128),
                                     activation,
@@ -17,7 +21,7 @@ class RecurrentDepthBackbone(nn.Module):
                                 )
         else:
             self.combination_mlp = nn.Sequential(
-                                        nn.Linear(32 + env_cfg.env.n_proprio, 128),
+                                        nn.Linear(32 + num_actor_obs, 128),
                                         activation,
                                         nn.Linear(128, 32)
                                     )
@@ -26,12 +30,6 @@ class RecurrentDepthBackbone(nn.Module):
                                 nn.Linear(depth_encoder_cfg['hidden_dims'], 32),
                                 last_activation
                             )
-        # self.transformer = nn.Transformer(d_model=32, 
-        #                                   nhead=8, 
-        #                                   num_encoder_layers=6, 
-        #                                   num_decoder_layers=6, 
-        #                                   dim_feedforward=2048, 
-        #                                   dropout=0.1, activation='relu')
         self.hidden_states = None
         self.dummy_param = nn.Parameter(torch.empty(0))
     def forward(self, depth_image, proprioception):

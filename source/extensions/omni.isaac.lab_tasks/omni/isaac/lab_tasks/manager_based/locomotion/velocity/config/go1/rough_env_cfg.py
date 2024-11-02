@@ -144,11 +144,23 @@ class UnitreeGo1ObservationsCfg(ObservationsCfg):
             noise=Unoise(n_min=-0.1, n_max=0.1),
             clip=(-1.0, 1.0),
         )
+
+    class DepthBackboneCfg(ObsGroup):
+        depth_image = ObsTerm(
+            func=mdp.image,
+            params={
+                "sensor_cfg": SceneEntityCfg("depth_camera"),
+                "data_type": "distance_to_image_plane",
+            },
+            noise=Unoise(n_min=-0.1, n_max=0.1),
+            clip=(-1.0, 1.0),
+        )
     def __post_init__(self):
         super().__post_init__()
     
     policy: PolicyCfg = PolicyCfg()
     critic: CriticCfg = CriticCfg()
+    depth_image: DepthBackboneCfg = DepthBackboneCfg()
 
 
     
@@ -171,6 +183,11 @@ class UnitreeGo1RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
     scene: UnitreeGo1SceneCfg = UnitreeGo1SceneCfg(num_envs=300, env_spacing=2.5)
     rewards : UnitreeGo1RewardsCfg = UnitreeGo1RewardsCfg()
     observations: UnitreeGo1ObservationsCfg = UnitreeGo1ObservationsCfg()
+    
+    class env:
+        n_proprio = 48
+        n_privileged = 235
+
     def __post_init__(self):
         # post init of parent
         super().__post_init__()

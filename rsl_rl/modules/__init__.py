@@ -5,6 +5,13 @@
 
 from .actor_critic import ActorCritic
 from .actor_critic_recurrent import ActorCriticRecurrent
+from .actor_critic_depth import ActorCriticDepth
 from .normalizer import EmpiricalNormalization
+from .depth_backbone import RecurrentDepthBackbone, DepthOnlyFCBackbone58x87
 
-__all__ = ["ActorCritic", "ActorCriticRecurrent"]
+__all__ = ["ActorCritic", 
+           "ActorCriticRecurrent", 
+           "EmpiricalNormalization", 
+           "RecurrentDepthBackbone", 
+           "DepthOnlyFCBackbone58x87",
+           "ActorCriticDepth"]

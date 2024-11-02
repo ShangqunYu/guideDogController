@@ -18,8 +18,9 @@ class UnitreeGo1RoughPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     max_iterations = 4000 # previously 1500
     save_interval = 100
     experiment_name = "unitree_go1_rough"
-    empirical_normalization = False
+    empirical_normalization = False    
     policy = RslRlPpoActorCriticCfg(
+        class_name="ActorCritic", # TODO: implement ActorCriticDepth, then switch to it.
         init_noise_std=1.0,
         actor_hidden_dims=[512, 256, 128],
         critic_hidden_dims=[512, 256, 128],
@@ -39,13 +40,20 @@ class UnitreeGo1RoughPPORunnerCfg(RslRlOnPolicyRunnerCfg):
         desired_kl=0.01,
         max_grad_norm=1.0,
     )
+    depth_backbone = True
+    depth_backbone_cfg = {
+        "FC_output_dims": 32,
+        "hidden_dims": 512,
+        "learning_rate": 1.0e-3,
+        "num_steps_per_env": 120,
+    }
 
 
 @configclass
 class UnitreeGo1FlatPPORunnerCfg(UnitreeGo1RoughPPORunnerCfg):
     def __post_init__(self):
         super().__post_init__()
-
+        self.depth_backbone = False
         self.max_iterations = 1500
         self.experiment_name = "unitree_go1_flat"
         self.policy.actor_hidden_dims = [128, 128, 128]
