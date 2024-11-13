@@ -60,7 +60,12 @@ class PPO:
 
     def init_storage(self, num_envs, num_transitions_per_env, actor_obs_shape, critic_obs_shape, action_shape):
         self.storage = RolloutStorage(
-            num_envs, num_transitions_per_env, actor_obs_shape, critic_obs_shape, action_shape, self.device
+            num_envs, 
+            num_transitions_per_env, 
+            actor_obs_shape, 
+            critic_obs_shape, 
+            action_shape, 
+            self.device
         )
 
     def test_mode(self):
@@ -83,6 +88,9 @@ class PPO:
         self.transition.action_sigma = self.actor_critic.action_std.detach()
         # need to record obs and critic_obs before env.step()
         self.transition.observations = obs
+        if depth_image is not None:
+            depth_image = depth_image.reshape(depth_image.shape[0], 1, 58, 87)
+            self.transition.depth_images = depth_image
         self.transition.critic_observations = critic_obs
         return self.transition.actions
 
@@ -113,6 +121,7 @@ class PPO:
             generator = self.storage.mini_batch_generator(self.num_mini_batches, self.num_learning_epochs)
         for (
             obs_batch,
+            depth_image_batch,
             critic_obs_batch,
             actions_batch,
             target_values_batch,
@@ -124,7 +133,10 @@ class PPO:
             hid_states_batch,
             masks_batch,
         ) in generator:
-            self.actor_critic.act(obs_batch, masks=masks_batch, hidden_states=hid_states_batch[0])
+            if self.actor_critic.is_depth:
+                self.actor_critic.act(depth_image_batch, obs_batch, masks=masks_batch, hidden_states=hid_states_batch[0])
+            else:
+                self.actor_critic.act(obs_batch, masks=masks_batch, hidden_states=hid_states_batch[0])
             actions_log_prob_batch = self.actor_critic.get_actions_log_prob(actions_batch)
             value_batch = self.actor_critic.evaluate(
                 critic_obs_batch, masks=masks_batch, hidden_states=hid_states_batch[1]

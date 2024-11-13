@@ -12,7 +12,7 @@ from rsl_rl.utils import unpad_trajectories
 
 class ActorCriticRecurrent(ActorCritic):
     is_recurrent = True
-
+    is_depth = False
     def __init__(
         self,
         num_actor_obs,

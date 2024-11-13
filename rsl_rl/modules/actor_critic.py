@@ -11,7 +11,7 @@ from torch.distributions import Normal
 
 class ActorCritic(nn.Module):
     is_recurrent = False
-
+    is_depth = False
     def __init__(
         self,
         num_actor_obs,

@@ -20,7 +20,7 @@ class UnitreeGo1RoughPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     experiment_name = "unitree_go1_rough"
     empirical_normalization = False    
     policy = RslRlPpoActorCriticCfg(
-        class_name="ActorCritic", # TODO: implement ActorCriticDepth, then switch to it.
+        class_name="ActorCriticDepth", # TODO: implement ActorCriticDepth, then switch to it.
         init_noise_std=1.0,
         actor_hidden_dims=[512, 256, 128],
         critic_hidden_dims=[512, 256, 128],

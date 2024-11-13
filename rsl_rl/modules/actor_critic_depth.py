@@ -16,6 +16,7 @@ class ActorCriticDepth(nn.Module):
         One training pipeline for both proprioception and depth observations.
     """
     is_recurrent = False
+    is_depth = True
 
     def __init__(
         self,
@@ -111,7 +112,9 @@ class ActorCriticDepth(nn.Module):
         return self.distribution.entropy().sum(dim=-1)
 
     def update_distribution(self, depth_image, observations):
-        mean = self.actor(self.depth_backbone(depth_image, observations))
+        # breakpoint()
+        # print(depth_image.shape)
+        mean = self.actor(torch.cat((self.depth_backbone(depth_image, observations), observations), dim=-1))
         self.distribution = Normal(mean, mean * 0.0 + self.std)
 
     def act(self, depth_image, observations, **kwargs):

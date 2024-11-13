@@ -13,6 +13,7 @@ class RolloutStorage:
     class Transition:
         def __init__(self):
             self.observations = None
+            self.depth_images = None
             self.critic_observations = None
             self.actions = None
             self.rewards = None
@@ -44,7 +45,7 @@ class RolloutStorage:
         self.rewards = torch.zeros(num_transitions_per_env, num_envs, 1, device=self.device)
         self.actions = torch.zeros(num_transitions_per_env, num_envs, *actions_shape, device=self.device)
         self.dones = torch.zeros(num_transitions_per_env, num_envs, 1, device=self.device).byte()
-
+        self.depth_images = torch.zeros(num_transitions_per_env, num_envs, 1, 58, 87, device=self.device)
         # For PPO
         self.actions_log_prob = torch.zeros(num_transitions_per_env, num_envs, 1, device=self.device)
         self.values = torch.zeros(num_transitions_per_env, num_envs, 1, device=self.device)
@@ -68,6 +69,8 @@ class RolloutStorage:
         self.observations[self.step].copy_(transition.observations)
         if self.privileged_observations is not None:
             self.privileged_observations[self.step].copy_(transition.critic_observations)
+        # breakpoint()
+        self.depth_images[self.step].copy_(transition.depth_images)
         self.actions[self.step].copy_(transition.actions)
         self.rewards[self.step].copy_(transition.rewards.view(-1, 1))
         self.dones[self.step].copy_(transition.dones.view(-1, 1))
@@ -137,7 +140,7 @@ class RolloutStorage:
             critic_observations = self.privileged_observations.flatten(0, 1)
         else:
             critic_observations = observations
-
+        depth_image = self.depth_images.flatten(0, 1)
         actions = self.actions.flatten(0, 1)
         values = self.values.flatten(0, 1)
         returns = self.returns.flatten(0, 1)
@@ -153,6 +156,7 @@ class RolloutStorage:
                 batch_idx = indices[start:end]
 
                 obs_batch = observations[batch_idx]
+                depth_image_batch = depth_image[batch_idx]
                 critic_observations_batch = critic_observations[batch_idx]
                 actions_batch = actions[batch_idx]
                 target_values_batch = values[batch_idx]
@@ -161,7 +165,7 @@ class RolloutStorage:
                 advantages_batch = advantages[batch_idx]
                 old_mu_batch = old_mu[batch_idx]
                 old_sigma_batch = old_sigma[batch_idx]
-                yield obs_batch, critic_observations_batch, actions_batch, target_values_batch, advantages_batch, returns_batch, old_actions_log_prob_batch, old_mu_batch, old_sigma_batch, (
+                yield obs_batch, depth_image_batch, critic_observations_batch, actions_batch, target_values_batch, advantages_batch, returns_batch, old_actions_log_prob_batch, old_mu_batch, old_sigma_batch, (
                     None,
                     None,
                 ), None
