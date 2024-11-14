@@ -118,7 +118,12 @@ def main():
         # run everything in inference mode
         with torch.inference_mode():
             # agent stepping
-            actions = policy(obs)
+            if True:
+                # breakpoint()
+                depth_image = env.get_observations()[1]['observations']['depth_image'].reshape(50, 1, 58, 87)
+                actions = policy(depth_image, obs)
+            else:
+                actions = policy(obs)
             # env stepping
             obs, _, _, _ = env.step(actions)
         if args_cli.video:

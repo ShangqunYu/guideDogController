@@ -112,8 +112,6 @@ class ActorCriticDepth(nn.Module):
         return self.distribution.entropy().sum(dim=-1)
 
     def update_distribution(self, depth_image, observations):
-        # breakpoint()
-        # print(depth_image.shape)
         mean = self.actor(torch.cat((self.depth_backbone(depth_image, observations), observations), dim=-1))
         self.distribution = Normal(mean, mean * 0.0 + self.std)
 
@@ -125,7 +123,7 @@ class ActorCriticDepth(nn.Module):
         return self.distribution.log_prob(actions).sum(dim=-1)
 
     def act_inference(self, depth_image, observations):
-        actions_mean = self.actor(self.depth_backbone(depth_image, observations))
+        actions_mean = self.actor(torch.cat((self.depth_backbone(depth_image, observations), observations), dim=-1))
         return actions_mean
 
     def evaluate(self, critic_observations, **kwargs):
