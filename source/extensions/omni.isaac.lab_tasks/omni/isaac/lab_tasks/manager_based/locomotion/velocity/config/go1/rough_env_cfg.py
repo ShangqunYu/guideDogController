@@ -26,7 +26,7 @@ from omni.isaac.lab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 
 from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR, ISAACLAB_NUCLEUS_DIR
 from omni.isaac.lab.terrains.config.rough import ROUGH_TERRAINS_CFG  # isort: skip
-
+from .terrain_cfg import UNITREE_GO1_ROUGH_TERRAINS_CFG
 
 from omni.isaac.lab_tasks.manager_based.locomotion.velocity.velocity_env_cfg import (
     LocomotionVelocityRoughEnvCfg,
@@ -48,6 +48,25 @@ from omni.isaac.lab_assets.unitree import UNITREE_GO1_CFG  # isort: skip
 
 @configclass
 class UnitreeGo1SceneCfg(MySceneCfg):
+    terrain = TerrainImporterCfg(
+        prim_path="/World/ground",
+        terrain_type="generator",
+        terrain_generator=UNITREE_GO1_ROUGH_TERRAINS_CFG,
+        max_init_terrain_level=5,
+        collision_group=-1,
+        physics_material=sim_utils.RigidBodyMaterialCfg(
+            friction_combine_mode="multiply",
+            restitution_combine_mode="multiply",
+            static_friction=1.0,
+            dynamic_friction=1.0,
+        ),
+        visual_material=sim_utils.MdlFileCfg(
+            mdl_path=f"{ISAACLAB_NUCLEUS_DIR}/Materials/TilesMarbleSpiderWhiteBrickBondHoned/TilesMarbleSpiderWhiteBrickBondHoned.mdl",
+            project_uvw=True,
+            texture_scale=(0.25, 0.25),
+        ),
+        debug_vis=False,
+    )
 
     # robot: ArticulationCfg = MISSING
     """Configuration for the terrain scene with a legged robot."""
@@ -96,7 +115,7 @@ class UnitreeGo1RewardsCfg:
     action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.01)
     feet_air_time = RewTerm(
         func=mdp.feet_air_time,
-        weight=0.25,
+        weight=1.0, # prev 0.25
         params={
             "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_foot"),
             "command_name": "base_velocity",
@@ -214,7 +233,7 @@ class UnitreeGo1RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         self.scene.robot = UNITREE_GO1_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
         self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/trunk"
         # scale down the terrains because the robot is small
-        self.scene.terrain.terrain_generator.sub_terrains["boxes"].grid_height_range = (0.025, 0.1)
+        # self.scene.terrain.terrain_generator.sub_terrains["boxes"].grid_height_range = (0.025, 0.1)
         self.scene.terrain.terrain_generator.sub_terrains["random_rough"].noise_range = (0.01, 0.06)
         self.scene.terrain.terrain_generator.sub_terrains["random_rough"].noise_step = 0.01
 
