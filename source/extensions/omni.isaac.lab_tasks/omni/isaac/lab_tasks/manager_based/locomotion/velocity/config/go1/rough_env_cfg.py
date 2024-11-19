@@ -83,10 +83,10 @@ class UnitreeGo1RewardsCfg:
 
     # -- task
     track_lin_vel_xy_exp = RewTerm(
-        func=mdp.track_lin_vel_xy_exp, weight=8.0, params={"command_name": "base_velocity", "std": math.sqrt(0.25)}
+        func=mdp.track_lin_vel_xy_exp, weight=5.0, params={"command_name": "base_velocity", "std": math.sqrt(0.25)}
     )
     track_ang_vel_z_exp = RewTerm(
-        func=mdp.track_ang_vel_z_exp, weight=4.0, params={"command_name": "base_velocity", "std": math.sqrt(0.25)}
+        func=mdp.track_ang_vel_z_exp, weight=2.0, params={"command_name": "base_velocity", "std": math.sqrt(0.25)}
     )
     # -- penalties
     lin_vel_z_l2 = RewTerm(func=mdp.lin_vel_z_l2, weight=-1.0)
@@ -96,7 +96,7 @@ class UnitreeGo1RewardsCfg:
     action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.01)
     feet_air_time = RewTerm(
         func=mdp.feet_air_time,
-        weight=0.125,
+        weight=0.25,
         params={
             "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_foot"),
             "command_name": "base_velocity",
@@ -109,7 +109,7 @@ class UnitreeGo1RewardsCfg:
     )
     undesired_contacts = RewTerm(
         func=mdp.undesired_contacts,
-        weight=-1.0,
+        weight=-2.0,
         params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_thigh"), "threshold": 1.0},
     )
     # -- optional penalties
@@ -123,7 +123,7 @@ class UnitreeGo1RewardsCfg:
     base_height = RewTerm(
         func=mdp.base_height_l2,
         weight=-0.001,
-        params={"target_height": 20.0},
+        params={"target_height": 27.0},
     )
 
 @configclass
@@ -179,8 +179,8 @@ class UnitreeGo1ObservationsCfg(ObservationsCfg):
     depth_image: DepthBackboneCfg = DepthBackboneCfg()
 
 
-    
-class UnitreeGo1CommandsCfg(CommandsCfg):
+@configclass
+class UnitreeGo1CommandsCfg:
     base_velocity = mdp.UniformVelocityCommandCfg(
         asset_name="robot",
         resampling_time_range=(10.0, 10.0),
@@ -190,7 +190,7 @@ class UnitreeGo1CommandsCfg(CommandsCfg):
         heading_control_stiffness=0.5,
         debug_vis=True,
         ranges=mdp.UniformVelocityCommandCfg.Ranges(
-            lin_vel_x=(-1.0, 1.0), lin_vel_y=(-1.0, 1.0), ang_vel_z=(-1.0, 1.0), heading=(-math.pi, math.pi)
+            lin_vel_x=(0.5, 2.0), lin_vel_y=(0, 0), ang_vel_z=(-1.0, 1.0), heading=(-math.pi, math.pi)
         ),
     )
 
@@ -199,7 +199,7 @@ class UnitreeGo1RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
     scene: UnitreeGo1SceneCfg = UnitreeGo1SceneCfg(num_envs=300, env_spacing=2.5)
     rewards: UnitreeGo1RewardsCfg = UnitreeGo1RewardsCfg()
     observations: UnitreeGo1ObservationsCfg = UnitreeGo1ObservationsCfg()
-    
+    commands: UnitreeGo1CommandsCfg = UnitreeGo1CommandsCfg()
     class env:
         n_proprio = 48
         n_privileged = 235
@@ -241,11 +241,7 @@ class UnitreeGo1RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
 
         # rewards
         self.rewards.feet_air_time.params["sensor_cfg"].body_names = ".*_foot"
-        self.rewards.feet_air_time.weight = 0.1
-        # self.rewards.undesired_contacts = None
         self.rewards.dof_torques_l2.weight = -0.0001
-        # self.rewards.track_lin_vel_xy_exp.weight = 1.5
-        # self.rewards.track_ang_vel_z_exp.weight = 0.75
         self.rewards.dof_acc_l2.weight = -2.5e-7
 
         # terminations
@@ -255,8 +251,8 @@ class UnitreeGo1RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
 ##
 # PLAY Configs
 ##
-
-class UnitreeGo1CommandsCfg_PLAY(CommandsCfg):
+@configclass
+class UnitreeGo1CommandsCfg_PLAY:
     base_velocity = mdp.UniformVelocityCommandCfg(
         asset_name="robot",
         resampling_time_range=(10.0, 10.0),
@@ -267,7 +263,7 @@ class UnitreeGo1CommandsCfg_PLAY(CommandsCfg):
         debug_vis=True,
         # want robots to always move forward
         ranges=mdp.UniformVelocityCommandCfg.Ranges(
-            lin_vel_x=(1.0, 0.0), lin_vel_y=(0, 0), ang_vel_z=(0, 0), heading=(-math.pi, -math.pi)
+            lin_vel_x=(1.0, 2.0), lin_vel_y=(0, 0), ang_vel_z=(0, 0), heading=(0, 0)
         ),
     )
 
