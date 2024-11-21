@@ -35,22 +35,11 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
             border_width=1.0,
             holes=False,
         ),
-        # "boxes": terrain_gen.MeshRandomGridTerrainCfg(
-        #     proportion=0.05, grid_width=0.45, grid_height_range=(0.01, 0.01), platform_width=2.0
-        # ),
-        # 'pit': terrain_gen.MeshPitTerrainCfg(
-        #     proportion=0.05, 
-        #     pit_depth_range=(0.01, 0.01), 
-        #     platform_width=2.0
-        # ),
-        'rails': terrain_gen.MeshRailsTerrainCfg(
-            proportion=0.1,
-            rail_thickness_range=(0.1, 0.1),
-            rail_height_range=(0.02, 0.1),
-            platform_width=0.05
-        ),
         "random_rough": terrain_gen.HfRandomUniformTerrainCfg(
-            proportion=0.2, noise_range=(0.02, 0.10), noise_step=0.02, border_width=0.25
+            proportion=0.2, noise_range=(0.01, 0.07), noise_step=0.01, border_width=0.25
+        ),
+        "wave": terrain_gen.HfWaveTerrainCfg(
+            proportion=0.1, amplitude_range=(0.01, 0.33), num_waves = 2.0
         ),
         "hf_pyramid_slope": terrain_gen.HfPyramidSlopedTerrainCfg(
             proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25

@@ -165,3 +165,14 @@ class HfSteppingStonesTerrainCfg(HfTerrainBaseCfg):
     """The depth of the holes (negative obstacles). Defaults to -10.0."""
     platform_width: float = 1.0
     """The width of the square platform at the center of the terrain. Defaults to 1.0."""
+
+@configclass
+class HfHorizontalRailsTerrainCfg(HfTerrainBaseCfg):
+    function = hf_terrains.horizontal_rails
+
+    rail_height_range: tuple[float, float] = MISSING
+    """The minimum and maximum height of the rails (in m)."""
+    rail_thickness: float = MISSING
+    """The thickness of the rails (in m)."""
+    rail_counts = 3.0
+    """The number of rails to generate. Defaults to 3.0."""
