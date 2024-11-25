@@ -97,7 +97,7 @@ class UnitreeGo1FlatRewardsCfg:
     base_height = RewTerm(
         func=mdp.base_height_l2,
         weight=-0.001,
-        params={"target_height": 31},
+        params={"target_height": 29.0},
     )
 
 @configclass
@@ -150,7 +150,7 @@ class UnitreeGo1CommandsCfg_PLAY:
         debug_vis=True,
         # want robots to always move forward
         ranges=mdp.UniformVelocityCommandCfg.Ranges(
-            lin_vel_x=(0.0, 1.0), lin_vel_y=(0, 0), ang_vel_z=(0, 0), heading=(0, 0)
+            lin_vel_x=(0.1, 2.0), lin_vel_y=(0, 0), ang_vel_z=(0, 0), heading=(0, 0)
         ),
     )
 
