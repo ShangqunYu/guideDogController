@@ -59,7 +59,7 @@ def random_uniform_terrain(difficulty: float, cfg: hf_terrains_cfg.HfRandomUnifo
     length_downsampled = int(cfg.size[1] / cfg.downsampled_scale)
     # -- height
     height_min = int(cfg.noise_range[0] / cfg.vertical_scale)
-    height_max = int(cfg.noise_range[1] / cfg.vertical_scale)
+    height_max = int(max(cfg.noise_range[1] * difficulty, cfg.noise_range[0]) / cfg.vertical_scale)
     height_step = int(cfg.noise_step / cfg.vertical_scale)
 
     # create range of heights possible
@@ -452,30 +452,21 @@ def horizontal_rails(difficulty: float, cfg: hf_terrains_cfg.HfHorizontalRailsTe
         ValueError: When the number of waves is non-positive.
     """
     # check number of waves
-    if cfg.num_waves < 0:
-        raise ValueError(f"Number of waves must be a positive integer. Got: {cfg.num_waves}.")
-
+    if cfg.num_rails <= 0:
+        raise ValueError(f"Number of waves must be a positive integer. Got: {cfg.num_rails}.")
+    # cfg.horizontal_scale = 0.05
     # resolve terrain configuration
-    amplitude = cfg.amplitude_range[0] + difficulty * (cfg.amplitude_range[1] - cfg.amplitude_range[0])
+    rail_height = cfg.rail_height_range[0] + difficulty * (cfg.rail_height_range[1] - cfg.rail_height_range[0])
+    rail_height = int(rail_height / cfg.vertical_scale)
     # switch parameters to discrete units
     # -- terrain
     width_pixels = int(cfg.size[0] / cfg.horizontal_scale)
     length_pixels = int(cfg.size[1] / cfg.horizontal_scale)
-    amplitude_pixels = int(0.5 * amplitude / cfg.vertical_scale)
+    rail_pixels = int(cfg.rail_thickness / cfg.horizontal_scale)
 
-    # compute the wave number: nu = 2 * pi / lambda
-    wave_length = length_pixels / cfg.num_waves
-    wave_number = 2 * np.pi / wave_length
-    # create meshgrid for the terrain
-    x = np.arange(0, width_pixels)
-    y = np.arange(0, length_pixels)
-    xx, yy = np.meshgrid(x, y, sparse=True)
-    xx = xx.reshape(width_pixels, 1)
-    yy = yy.reshape(1, length_pixels)
-
-    # create a terrain with a flat platform at the center
     hf_raw = np.zeros((width_pixels, length_pixels))
-    # add the waves
-    hf_raw += amplitude_pixels * (np.cos(yy * wave_number) + np.sin(xx * wave_number))
+    for i in range(rail_pixels):
+        hf_raw[(width_pixels//cfg.num_rails + i)::width_pixels//cfg.num_rails] = rail_height
+    # breakpoint()
     # round off the heights to the nearest vertical step
     return np.rint(hf_raw).astype(np.int16)

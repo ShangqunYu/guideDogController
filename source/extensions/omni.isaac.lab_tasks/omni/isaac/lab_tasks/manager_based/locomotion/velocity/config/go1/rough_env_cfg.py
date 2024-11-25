@@ -113,15 +113,15 @@ class UnitreeGo1RewardsCfg:
     dof_torques_l2 = RewTerm(func=mdp.joint_torques_l2, weight=-1.0e-5)
     dof_acc_l2 = RewTerm(func=mdp.joint_acc_l2, weight=-2.5e-7)
     action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.01)
-    feet_air_time = RewTerm(
-        func=mdp.feet_air_time,
-        weight=0.1, # prev 0.25
-        params={
-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_foot"),
-            "command_name": "base_velocity",
-            "threshold": 0.5,
-        },
-    )
+    # feet_air_time = RewTerm(
+    #     func=mdp.feet_air_time,
+    #     weight=0.1, # prev 0.25
+    #     params={
+    #         "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_foot"),
+    #         "command_name": "base_velocity",
+    #         "threshold": 0.5,
+    #     },
+    # )
     termination = RewTerm(
         func=mdp.is_terminated,
         weight = -1.0
@@ -139,11 +139,11 @@ class UnitreeGo1RewardsCfg:
         weight=-.5,
         params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*")}
     )
-    # base_height = RewTerm(
-    #     func=mdp.base_height_l2,
-    #     weight=-0.001,
-    #     params={"target_height": 27.0},
-    # )
+    base_height = RewTerm(
+        func=mdp.base_height_l2,
+        weight=-0.001,
+        params={"target_height": 29.0},
+    )
 
 @configclass
 class UnitreeGo1ObservationsCfg(ObservationsCfg):
@@ -259,7 +259,6 @@ class UnitreeGo1RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         }
 
         # rewards
-        self.rewards.feet_air_time.params["sensor_cfg"].body_names = ".*_foot"
         self.rewards.dof_torques_l2.weight = -0.0001
         self.rewards.dof_acc_l2.weight = -2.5e-7
 

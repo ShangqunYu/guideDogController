@@ -123,6 +123,7 @@ def action_smoothness(
     """Reward smoothness of the robot actions."""
     # extract the used quantities (to enable type-hinting)
     asset = env.scene[asset_cfg.name]
+    # breakpoint()
     action = env.command_manager.get_command("joint_pos")[:, :asset.data.num_dofs]
     action_diff = torch.sum(torch.square(action[1:] - action[:-1]), dim=1)
     return action_diff

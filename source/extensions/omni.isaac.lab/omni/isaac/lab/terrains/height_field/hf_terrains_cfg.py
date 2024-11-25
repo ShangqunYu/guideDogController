@@ -174,5 +174,5 @@ class HfHorizontalRailsTerrainCfg(HfTerrainBaseCfg):
     """The minimum and maximum height of the rails (in m)."""
     rail_thickness: float = MISSING
     """The thickness of the rails (in m)."""
-    rail_counts = 3.0
+    num_rails = 3.0
     """The number of rails to generate. Defaults to 3.0."""
