@@ -15,7 +15,7 @@ from omni.isaac.lab_tasks.utils.wrappers.rsl_rl import (
 @configclass
 class UnitreeGo1RoughPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     num_steps_per_env = 24
-    max_iterations = 10000 # previously 4000
+    max_iterations = 2500 # previously 4000
     save_interval = 100
     experiment_name = "unitree_go1_rough"
     empirical_normalization = False    
@@ -54,7 +54,7 @@ class UnitreeGo1FlatPPORunnerCfg(UnitreeGo1RoughPPORunnerCfg):
     def __post_init__(self):
         super().__post_init__()
         self.depth_backbone = True
-        self.max_iterations = 10000
+        self.max_iterations = 2500
         self.experiment_name = "unitree_go1_flat"
         # self.policy.actor_hidden_dims = [128, 128, 128]
         # self.policy.critic_hidden_dims = [128, 128, 128]

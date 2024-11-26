@@ -102,13 +102,13 @@ class UnitreeGo1RewardsCfg:
 
     # -- task
     track_lin_vel_xy_exp = RewTerm(
-        func=mdp.track_lin_vel_xy_exp, weight=5.0, params={"command_name": "base_velocity", "std": math.sqrt(0.25)}
+        func=mdp.track_lin_vel_xy_exp, weight=4.5, params={"command_name": "base_velocity", "std": math.sqrt(0.25)}
     )
     track_ang_vel_z_exp = RewTerm(
-        func=mdp.track_ang_vel_z_exp, weight=2.0, params={"command_name": "base_velocity", "std": math.sqrt(0.25)}
+        func=mdp.track_ang_vel_z_exp, weight=1.5, params={"command_name": "base_velocity", "std": math.sqrt(0.25)}
     )
     # -- penalties
-    lin_vel_z_l2 = RewTerm(func=mdp.lin_vel_z_l2, weight=-1.0)
+    lin_vel_z_l2 = RewTerm(func=mdp.lin_vel_z_l2, weight=-0.5)
     ang_vel_xy_l2 = RewTerm(func=mdp.ang_vel_xy_l2, weight=-0.05)
     dof_torques_l2 = RewTerm(func=mdp.joint_torques_l2, weight=-1.0e-5)
     dof_acc_l2 = RewTerm(func=mdp.joint_acc_l2, weight=-2.5e-7)
@@ -126,24 +126,38 @@ class UnitreeGo1RewardsCfg:
         func=mdp.is_terminated,
         weight = -1.0
     )
-    undesired_contacts = RewTerm(
-        func=mdp.undesired_contacts,
-        weight=-2.0,
-        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_thigh"), "threshold": 1.0},
+    orientation = RewTerm(
+        func = mdp.flat_orientation_l2,
+        weight = -1.0
+    )    
+    smoothness = RewTerm(
+        func = mdp.action_smoothness_penalty,
+        weight = -0.05
     )
-    # -- optional penalties
-    # flat_orientation_l2 = RewTerm(func=mdp.flat_orientation_l2, weight=1.0)
-    # dof_pos_limits = RewTerm(func=mdp.joint_pos_limits, weight=1.0)
-    collision = RewTerm(
-        func=mdp.collision, 
-        weight=-.5,
-        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*")}
-    )
+
     base_height = RewTerm(
         func=mdp.base_height_l2,
         weight=-0.001,
-        params={"target_height": 29.0},
+        params={"target_height": 30.2},
     )
+    # undesired_contacts = RewTerm(
+    #     func=mdp.undesired_contacts,
+    #     weight=-2.0,
+    #     params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_thigh"), "threshold": 1.0},
+    # )
+    # -- optional penalties
+    # flat_orientation_l2 = RewTerm(func=mdp.flat_orientation_l2, weight=1.0)
+    # dof_pos_limits = RewTerm(func=mdp.joint_pos_limits, weight=1.0)
+    # collision = RewTerm(
+    #     func=mdp.collision, 
+    #     weight=-.5,
+    #     params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*")}
+    # )
+    # base_height = RewTerm(
+    #     func=mdp.base_height_l2,
+    #     weight=-0.001,
+    #     params={"target_height": 29.0},
+    # )
     # raibert = RewTerm(
     #     func=mdp.raibert_heuristic,
     #     weight=-0.5,
