@@ -181,6 +181,7 @@ def raibert_heuristic(
     This function rewards the agent for following the Raibert heuristic, which is to move the robot's center of mass
     forward
     """
+    breakpoint()
     # Calculate current foot positions in the body frame
     cur_footsteps_translated = env.scene[asset_cfg.name].data.foot_positions - env.scene[asset_cfg.name].data.base_pos.unsqueeze(1)
     footsteps_in_body_frame = torch.zeros(env.num_envs, 4, 3, device=env.device)

@@ -70,14 +70,14 @@ UNITREE_GO1_FLAT_TERRAIN_CFG = TerrainGeneratorCfg(
     sub_terrains={
         "horizontal_rails": terrain_gen.HfHorizontalRailsTerrainCfg(
             proportion=1.0, 
-            rail_height_range=(0.04, 0.20), 
+            rail_height_range=(0.04, 0.04), 
             rail_thickness=0.2, 
             num_rails=5,
             horizontal_scale=0.005,
         ),
-        "wave": terrain_gen.HfWaveTerrainCfg(
-            proportion=1.0, amplitude_range=(0.05, 0.33), num_waves = 2.0
-        )
+        # "wave": terrain_gen.HfWaveTerrainCfg(
+        #     proportion=1.0, amplitude_range=(0.05, 0.33), num_waves = 2.0
+        # )
     },
 )
 """Rough terrains configuration."""
