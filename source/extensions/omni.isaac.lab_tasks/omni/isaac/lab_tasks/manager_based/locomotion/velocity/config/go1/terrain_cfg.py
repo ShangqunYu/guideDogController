@@ -75,6 +75,9 @@ UNITREE_GO1_FLAT_TERRAIN_CFG = TerrainGeneratorCfg(
             num_rails=5,
             horizontal_scale=0.005,
         ),
+        "random_rough": terrain_gen.HfRandomUniformTerrainCfg(
+            proportion=1.0, noise_range=(0.02, 0.06), noise_step=0.01, border_width=0.25
+        ),
         # "wave": terrain_gen.HfWaveTerrainCfg(
         #     proportion=1.0, amplitude_range=(0.05, 0.33), num_waves = 2.0
         # )
