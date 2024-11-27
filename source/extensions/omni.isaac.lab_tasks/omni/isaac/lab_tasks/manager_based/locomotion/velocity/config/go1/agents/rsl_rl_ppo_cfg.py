@@ -15,7 +15,7 @@ from omni.isaac.lab_tasks.utils.wrappers.rsl_rl import (
 @configclass
 class UnitreeGo1RoughPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     num_steps_per_env = 24
-    max_iterations = 2500 # previously 4000
+    max_iterations = 4000 # previously 4000
     save_interval = 100
     experiment_name = "unitree_go1_rough"
     empirical_normalization = False    
