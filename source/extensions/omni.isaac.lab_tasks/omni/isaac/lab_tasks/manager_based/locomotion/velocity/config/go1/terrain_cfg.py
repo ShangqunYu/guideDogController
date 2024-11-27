@@ -36,14 +36,14 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
             holes=False,
         ),
         "random_rough": terrain_gen.HfRandomUniformTerrainCfg(
-            proportion=0.2, noise_range=(0.01, 0.1), noise_step=0.01, border_width=0.25
+            proportion=0.2, noise_range=(0.02, 0.06), noise_step=0.01, border_width=0.25
         ),
         # "wave": terrain_gen.HfWaveTerrainCfg(
         #     proportion=0.1, amplitude_range=(0.01, 0.33), num_waves = 2.0
         # ),
         "horizontal_rails": terrain_gen.HfHorizontalRailsTerrainCfg(
             proportion=0.2, 
-            rail_height_range=(0.05, 0.1), 
+            rail_height_range=(0.05, 0.05), 
             rail_thickness=0.2, 
             num_rails=3,
             horizontal_scale=0.005,

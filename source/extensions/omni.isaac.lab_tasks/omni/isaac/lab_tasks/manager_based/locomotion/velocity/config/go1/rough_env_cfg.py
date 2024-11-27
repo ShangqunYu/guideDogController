@@ -138,7 +138,7 @@ class UnitreeGo1RewardsCfg:
     base_height = RewTerm(
         func=mdp.base_height_l2,
         weight=-0.001,
-        params={"target_height": 30.2},
+        params={"target_height": 31.0},
     )
     # undesired_contacts = RewTerm(
     #     func=mdp.undesired_contacts,
