@@ -77,7 +77,7 @@ class UnitreeGo1SceneCfg(MySceneCfg):
             attach_yaw_only=True,
             offset=RayCasterCameraCfg.OffsetCfg(
                 pos=(0.245+0.027, 0.0075, 0.072+0.02),  # imported from Isaacgym
-                rot=(1,0,0,0), # previously (0, 0, 1, 0) in "ros" convention 
+                rot=(0.97,0,0.26,0), # previously (0, 0, 1, 0) in "ros" convention 
                 convention="world"),
             data_types=["distance_to_image_plane"],
             debug_vis=False,
@@ -300,7 +300,7 @@ class UnitreeGo1CommandsCfg_PLAY:
         debug_vis=True,
         # want robots to always move forward
         ranges=mdp.UniformVelocityCommandCfg.Ranges(
-            lin_vel_x=(1.0, 1.0), lin_vel_y=(0, 0), ang_vel_z=(-1, 1), heading=(0, 0)
+            lin_vel_x=(1.0, 1.5), lin_vel_y=(0, 0), ang_vel_z=(-1, 1), heading=(0, 0)
         ),
     )
 
