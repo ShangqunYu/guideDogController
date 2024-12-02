@@ -85,8 +85,8 @@ class UnitreeGo1SceneCfg(MySceneCfg):
             pattern_cfg=patterns.PinholeCameraPatternCfg(
                 focal_length=0.193,
                 horizontal_aperture=0.372, # 20.995
-                height=int(58*1.2),
-                width=int(87*1.2),
+                height=int(58),
+                width=int(87),
             ),
         )
     

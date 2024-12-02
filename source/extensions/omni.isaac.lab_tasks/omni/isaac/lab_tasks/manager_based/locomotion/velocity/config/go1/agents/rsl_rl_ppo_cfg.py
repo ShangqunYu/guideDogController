@@ -42,8 +42,8 @@ class UnitreeGo1RoughPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     )
     depth_backbone = True
     depth_backbone_cfg = {
-        "width": int(58*1.2),
-        "height": int(87 *1.2),
+        "width": int(58),
+        "height": int(87),
         "FC_output_dims": 32,
         "hidden_dims": 512,
         "learning_rate": 1.0e-3,
