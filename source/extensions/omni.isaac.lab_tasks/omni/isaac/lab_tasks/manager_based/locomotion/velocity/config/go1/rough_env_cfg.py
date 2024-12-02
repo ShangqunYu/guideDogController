@@ -81,12 +81,12 @@ class UnitreeGo1SceneCfg(MySceneCfg):
                 convention="world"),
             data_types=["distance_to_image_plane"],
             debug_vis=False,
-            max_distance=10.0,
+            max_distance=3.0,
             pattern_cfg=patterns.PinholeCameraPatternCfg(
-                focal_length=24.0,
-                horizontal_aperture=20.955,
-                height=58,
-                width=87,
+                focal_length=0.193,
+                horizontal_aperture=0.372, # 20.995
+                height=58*2,
+                width=87*2,
             ),
         )
     

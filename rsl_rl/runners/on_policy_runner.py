@@ -47,7 +47,11 @@ class OnPolicyRunner:
             num_critic_obs = num_obs
         actor_critic_class = eval(self.policy_cfg.pop("class_name"))  # ActorCritic
         actor_critic: ActorCritic | ActorCriticRecurrent | ActorCriticDepth = actor_critic_class(
-            num_obs, num_critic_obs, self.env.num_actions, **self.policy_cfg
+            num_obs, 
+            num_critic_obs, 
+            self.env.num_actions,
+            depth_image_size = [self.cfg["depth_backbone_cfg"]["width"], self.cfg["depth_backbone_cfg"]["height"]],
+            **self.policy_cfg
         ).to(self.device)         
 
         alg_class = eval(self.alg_cfg.pop("class_name"))  # PPO
@@ -68,6 +72,7 @@ class OnPolicyRunner:
             [num_obs],
             [num_critic_obs],
             [self.env.num_actions],
+            [self.cfg["depth_backbone_cfg"]["width"], self.cfg["depth_backbone_cfg"]["height"]],
         )
 
         # Log

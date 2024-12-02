@@ -48,11 +48,15 @@ class RecurrentDepthBackbone(nn.Module):
 
     
 class DepthOnlyFCBackbone58x87(nn.Module):
-    def __init__(self, output_dim, output_activation=None, num_frames=1):
+    def __init__(self, output_dim, depth_image_size, output_activation=None, num_frames=1):
         super().__init__()
-
+        self.width, self.height = depth_image_size
         self.num_frames = num_frames
         activation = nn.ELU()
+        
+        # calculate the shape of the linear layer 
+        linear_width = (self.width - 4) //2 - 2
+        linear_height = (self.height - 4) //2 - 2
         self.image_compression = nn.Sequential(
             # [1, 58, 87]
             nn.Conv2d(in_channels=self.num_frames, out_channels=32, kernel_size=5),
@@ -63,8 +67,9 @@ class DepthOnlyFCBackbone58x87(nn.Module):
             nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3),
             activation,
             nn.Flatten(),
-            # [32, 25, 39]
-            nn.Linear(64 * 25 * 39, 128),
+            # [64, 25, 39]
+            
+            nn.Linear(64 * linear_width * linear_height, 128),
             activation,
             nn.Linear(128, output_dim)
         )
@@ -76,7 +81,9 @@ class DepthOnlyFCBackbone58x87(nn.Module):
 
     def forward(self, images: torch.Tensor):
         num_envs = images.shape[0]
-        images_compressed = self.image_compression(torch.nan_to_num(images.reshape(num_envs, 1, 58, 87), nan=0.0))
+        # breakpoint()
+        # self.width, self.height = images.shape[1], images.shape[2]
+        images_compressed = self.image_compression(torch.nan_to_num(images.reshape(num_envs, 1, self.width, self.height), nan=0.0))
         # breakpoint()
         latent = self.output_activation(images_compressed)
         return latent

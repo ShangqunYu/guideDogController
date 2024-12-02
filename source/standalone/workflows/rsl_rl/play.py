@@ -120,10 +120,13 @@ def main():
             # agent stepping
             if True:
                 # breakpoint()
-                depth_image = env.get_observations()[1]['observations']['depth_image'].reshape(50, 1, 58, 87)
+                width = env.get_observations()[1]['observations']['depth_image'].shape[1]
+                height = env.get_observations()[1]['observations']['depth_image'].shape[2]
+                depth_image = env.get_observations()[1]['observations']['depth_image'].reshape(50, 1, width, height)
                 actions = policy(depth_image, obs)
             else:
                 actions = policy(obs)
+                
             # env stepping
             obs, _, _, _ = env.step(actions)
         if args_cli.video:

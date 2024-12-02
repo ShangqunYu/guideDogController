@@ -58,13 +58,20 @@ class PPO:
         self.max_grad_norm = max_grad_norm
         self.use_clipped_value_loss = use_clipped_value_loss
 
-    def init_storage(self, num_envs, num_transitions_per_env, actor_obs_shape, critic_obs_shape, action_shape):
+    def init_storage(self, 
+                     num_envs, 
+                     num_transitions_per_env, 
+                     actor_obs_shape, 
+                     critic_obs_shape, 
+                     action_shape,
+                     depth_image_shape):
         self.storage = RolloutStorage(
             num_envs, 
             num_transitions_per_env, 
             actor_obs_shape, 
             critic_obs_shape, 
-            action_shape, 
+            action_shape,
+            depth_image_shape,
             self.device
         )
 
@@ -89,7 +96,9 @@ class PPO:
         # need to record obs and critic_obs before env.step()
         self.transition.observations = obs
         if depth_image is not None:
-            depth_image = depth_image.reshape(depth_image.shape[0], 1, 58, 87)
+            # breakpoint()
+            width, height = depth_image.shape[1], depth_image.shape[2]
+            depth_image = depth_image.reshape(depth_image.shape[0], 1, width, height)
             self.transition.depth_images = depth_image
         self.transition.critic_observations = critic_obs
         return self.transition.actions
