@@ -22,7 +22,7 @@ class UnitreeGo1RoughPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     policy = RslRlPpoActorCriticCfg(
         class_name="ActorCriticDepth",
         init_noise_std=1.0,
-        actor_hidden_dims=[256, 128, 64],
+        actor_hidden_dims=[256, 64, 256, 64, 256],
         critic_hidden_dims=[512, 256, 128],
         activation="elu",
     )
