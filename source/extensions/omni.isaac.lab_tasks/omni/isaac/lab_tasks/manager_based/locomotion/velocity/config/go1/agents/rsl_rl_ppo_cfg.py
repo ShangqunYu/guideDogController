@@ -15,14 +15,14 @@ from omni.isaac.lab_tasks.utils.wrappers.rsl_rl import (
 @configclass
 class UnitreeGo1RoughPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     num_steps_per_env = 24
-    max_iterations = 4000 # previously 4000
-    save_interval = 100
+    max_iterations = 10000 # previously 4000
+    save_interval = 200
     experiment_name = "unitree_go1_rough"
-    empirical_normalization = False    
+    empirical_normalization = True   
     policy = RslRlPpoActorCriticCfg(
         class_name="ActorCriticDepth",
         init_noise_std=1.0,
-        actor_hidden_dims=[256, 64, 256, 64, 256],
+        actor_hidden_dims=[256, 64, 256, 64, 256], # prev [256, 256, 256] works quite okay, [256, 128, 64] too small
         critic_hidden_dims=[512, 256, 128],
         activation="elu",
     )
@@ -60,3 +60,4 @@ class UnitreeGo1FlatPPORunnerCfg(UnitreeGo1RoughPPORunnerCfg):
         self.experiment_name = "unitree_go1_flat"
         # self.policy.actor_hidden_dims = [128, 128, 128]
         # self.policy.critic_hidden_dims = [128, 128, 128]
+        
