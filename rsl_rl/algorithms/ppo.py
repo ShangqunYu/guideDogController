@@ -96,7 +96,6 @@ class PPO:
         # need to record obs and critic_obs before env.step()
         self.transition.observations = obs
         if depth_image is not None:
-            # breakpoint()
             width, height = depth_image.shape[1], depth_image.shape[2]
             depth_image = depth_image.reshape(depth_image.shape[0], 1, width, height)
             self.transition.depth_images = depth_image

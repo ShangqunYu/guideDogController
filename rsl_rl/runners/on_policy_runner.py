@@ -61,6 +61,7 @@ class OnPolicyRunner:
         self.empirical_normalization = self.cfg["empirical_normalization"]
         if self.empirical_normalization:
             self.obs_normalizer = EmpiricalNormalization(shape=[num_obs], until=1.0e8).to(self.device)
+            # self.obs_normalizer = EmpiricalNormalization(shape=[num_obs + 32 * int(self.if_depth)], until=1.0e8).to(self.device)
             self.critic_obs_normalizer = EmpiricalNormalization(shape=[num_critic_obs], until=1.0e8).to(self.device)
         else:
             self.obs_normalizer = torch.nn.Identity().to(self.device)  # no normalization
@@ -123,6 +124,7 @@ class OnPolicyRunner:
                         rewards.to(self.device),
                         dones.to(self.device),
                     )
+                    # breakpoint()
                     # perform normalization
                     obs = self.obs_normalizer(obs)
                     if "critic" in infos["observations"]:
@@ -278,10 +280,15 @@ class OnPolicyRunner:
         if device is not None:
             self.alg.actor_critic.to(device)
         policy = self.alg.actor_critic.act_inference
+        # breakpoint()
         if self.cfg["empirical_normalization"]:
             if device is not None:
                 self.obs_normalizer.to(device)
-            policy = lambda x: self.alg.actor_critic.act_inference(self.obs_normalizer(x))  # noqa: E731
+            if self.if_depth:
+                policy = lambda x, y: self.alg.actor_critic.act_inference(x, self.obs_normalizer(y))
+            else:
+                policy = lambda x: self.alg.actor_critic.act_inference(self.obs_normalizer(x))
+        # breakpoint()
         return policy
 
     def train_mode(self):

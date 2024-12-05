@@ -76,7 +76,6 @@ class RolloutStorage:
         self.observations[self.step].copy_(transition.observations)
         if self.privileged_observations is not None:
             self.privileged_observations[self.step].copy_(transition.critic_observations)
-        # breakpoint()
         self.depth_images[self.step].copy_(transition.depth_images)
         self.actions[self.step].copy_(transition.actions)
         self.rewards[self.step].copy_(transition.rewards.view(-1, 1))

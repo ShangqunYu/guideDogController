@@ -81,9 +81,6 @@ class DepthOnlyFCBackbone58x87(nn.Module):
 
     def forward(self, images: torch.Tensor):
         num_envs = images.shape[0]
-        # breakpoint()
-        # self.width, self.height = images.shape[1], images.shape[2]
         images_compressed = self.image_compression(torch.nan_to_num(images.reshape(num_envs, 1, self.width, self.height), nan=0.0))
-        # breakpoint()
         latent = self.output_activation(images_compressed)
         return latent

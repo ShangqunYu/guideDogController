@@ -467,6 +467,5 @@ def horizontal_rails(difficulty: float, cfg: hf_terrains_cfg.HfHorizontalRailsTe
     hf_raw = np.zeros((width_pixels, length_pixels))
     for i in range(rail_pixels):
         hf_raw[(width_pixels//cfg.num_rails + i)::width_pixels//cfg.num_rails] = rail_height
-    # breakpoint()
     # round off the heights to the nearest vertical step
     return np.rint(hf_raw).astype(np.int16)

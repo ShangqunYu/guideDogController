@@ -97,7 +97,9 @@ class _OnnxPolicyExporter(torch.nn.Module):
     def __init__(self, actor_critic, normalizer=None, verbose=False):
         super().__init__()
         self.verbose = verbose
+        self.num_actor_obs = actor_critic.num_actor_obs # get the number of obs without depth image
         self.actor = copy.deepcopy(actor_critic.actor)
+        self.is_depth = actor_critic.is_depth
         self.is_recurrent = actor_critic.is_recurrent
         if self.is_recurrent:
             self.rnn = copy.deepcopy(actor_critic.memory_a.rnn)
@@ -116,7 +118,11 @@ class _OnnxPolicyExporter(torch.nn.Module):
         return self.actor(x), h, c
 
     def forward(self, x):
-        return self.actor(self.normalizer(x))
+        if not self.is_depth:
+            return self.actor(self.normalizer(x))
+        else:
+            # breakpoint()
+            return self.actor(torch.cat((x[:, :-self.num_actor_obs], self.normalizer(x[:, -self.num_actor_obs:])), dim=1))
 
     def export(self, path, filename):
         self.to("cpu")

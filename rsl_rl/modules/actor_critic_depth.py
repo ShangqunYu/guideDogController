@@ -38,6 +38,9 @@ class ActorCriticDepth(nn.Module):
         super().__init__()
         activation = get_activation(activation)
 
+        self.num_actor_obs = num_actor_obs
+        self.num_critic_obs = num_critic_obs
+
         mlp_input_dim_a = num_actor_obs
         mlp_input_dim_c = num_critic_obs
 
@@ -118,6 +121,7 @@ class ActorCriticDepth(nn.Module):
 
     def act(self, depth_image, observations, **kwargs):
         self.update_distribution(depth_image, observations)
+        # breakpoint()
         return self.distribution.sample()
 
     def get_actions_log_prob(self, actions):

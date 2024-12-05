@@ -118,8 +118,7 @@ def main():
         # run everything in inference mode
         with torch.inference_mode():
             # agent stepping
-            if True:
-                # breakpoint()
+            if agent_cfg.depth_backbone:
                 width = env.get_observations()[1]['observations']['depth_image'].shape[1]
                 height = env.get_observations()[1]['observations']['depth_image'].shape[2]
                 depth_image = env.get_observations()[1]['observations']['depth_image'].reshape(50, 1, width, height)
