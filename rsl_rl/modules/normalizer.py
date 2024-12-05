@@ -48,7 +48,6 @@ class EmpiricalNormalization(nn.Module):
 
         if self.training:
             self.update(x)
-        print(x.shape, self._mean.shape, self._std.shape, self.eps)
         return (x - self._mean) / (self._std + self.eps)
 
     @torch.jit.unused
@@ -61,7 +60,7 @@ class EmpiricalNormalization(nn.Module):
         count_x = x.shape[0]
         self.count += count_x
         rate = count_x / self.count
-        
+
         var_x = torch.var(x, dim=0, unbiased=False, keepdim=True)
         mean_x = torch.mean(x, dim=0, keepdim=True)
         delta_mean = mean_x - self._mean

@@ -113,15 +113,6 @@ class UnitreeGo1RewardsCfg:
     dof_torques_l2 = RewTerm(func=mdp.joint_torques_l2, weight=-1.0e-5)
     dof_acc_l2 = RewTerm(func=mdp.joint_acc_l2, weight=-2.5e-7)
     action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.01)
-    # feet_air_time = RewTerm(
-    #     func=mdp.feet_air_time,
-    #     weight=0.1, # prev 0.25
-    #     params={
-    #         "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_foot"),
-    #         "command_name": "base_velocity",
-    #         "threshold": 0.5,
-    #     },
-    # )
     termination = RewTerm(
         func=mdp.is_terminated,
         weight = -1.0
@@ -140,28 +131,6 @@ class UnitreeGo1RewardsCfg:
         weight=-0.001,
         params={"target_height": 31.0},
     )
-    # undesired_contacts = RewTerm(
-    #     func=mdp.undesired_contacts,
-    #     weight=-2.0,
-    #     params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_thigh"), "threshold": 1.0},
-    # )
-    # -- optional penalties
-    # flat_orientation_l2 = RewTerm(func=mdp.flat_orientation_l2, weight=1.0)
-    # dof_pos_limits = RewTerm(func=mdp.joint_pos_limits, weight=1.0)
-    # collision = RewTerm(
-    #     func=mdp.collision, 
-    #     weight=-.5,
-    #     params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*")}
-    # )
-    # base_height = RewTerm(
-    #     func=mdp.base_height_l2,
-    #     weight=-0.001,
-    #     params={"target_height": 29.0},
-    # )
-    # raibert = RewTerm(
-    #     func=mdp.raibert_heuristic,
-    #     weight=-0.5,
-    # )
 
 
 @configclass
@@ -252,9 +221,6 @@ class UnitreeGo1RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         self.scene.robot = UNITREE_GO1_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
         self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/trunk"
         # scale down the terrains because the robot is small
-        # self.scene.terrain.terrain_generator.sub_terrains["boxes"].grid_height_range = (0.025, 0.1)
-        # self.scene.terrain.terrain_generator.sub_terrains["random_rough"].noise_range = (0.01, 0.06)
-        # self.scene.terrain.terrain_generator.sub_terrains["random_rough"].noise_step = 0.01
 
         # reduce action scale
         self.actions.joint_pos.scale = 0.25
