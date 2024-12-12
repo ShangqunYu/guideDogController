@@ -44,6 +44,8 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
             border_width=1.0,
             holes=False,
         ),
+        "trenches_left": terrain_gen.HfHorizontalTrenchesTerrainCfg(
+            proportion=0.1, trench_width_range=(0.1, 0.1), num_trenches = 3.0),
         "pyramid_stairs": terrain_gen.MeshPyramidStairsTerrainCfg(
             proportion=0.2,
             step_height_range=(0.05, 0.18),
@@ -52,6 +54,8 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
             border_width=1.0,
             holes=False,
         ),
+        "trenches_right": terrain_gen.HfHorizontalTrenchesTerrainCfg(
+            proportion=0.1, trench_width_range=(0.1, 0.1), num_trenches = 3.0),
         "pyramid_stairs_inv_right": terrain_gen.MeshInvertedPyramidStairsTerrainCfg(
             proportion=0.2,
             step_height_range=(0.05, 0.18),
@@ -76,7 +80,7 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
         ),
         "hf_pyramid_slope_inv_right": terrain_gen.HfInvertedPyramidSlopedTerrainCfg(
             proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
-        ),
+        )        
     },
 )
 
