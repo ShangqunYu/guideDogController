@@ -58,6 +58,7 @@ class UnitreeGo1FlatPPORunnerCfg(UnitreeGo1RoughPPORunnerCfg):
         self.depth_backbone = True
         self.max_iterations = 2500
         self.experiment_name = "unitree_go1_flat"
+        self.empirical_normalization = True
         # self.policy.actor_hidden_dims = [128, 128, 128]
         # self.policy.critic_hidden_dims = [128, 128, 128]
         

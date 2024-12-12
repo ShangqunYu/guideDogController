@@ -46,6 +46,7 @@ import omni.isaac.lab_tasks.manager_based.locomotion.velocity.mdp as mdp
 ##
 from omni.isaac.lab_assets.unitree import UNITREE_GO1_CFG  # isort: skip
 
+# breakpoint()
 @configclass
 class UnitreeGo1SceneCfg(MySceneCfg):
     terrain = TerrainImporterCfg(

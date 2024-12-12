@@ -466,7 +466,7 @@ def horizontal_rails(difficulty: float, cfg: hf_terrains_cfg.HfHorizontalRailsTe
 
     hf_raw = np.zeros((width_pixels, length_pixels))
     for i in range(rail_pixels):
-        hf_raw[:, (width_pixels//cfg.num_rails + i)::width_pixels//cfg.num_rails] = rail_height
+        # hf_raw[:, (width_pixels//cfg.num_rails + i)::width_pixels//cfg.num_rails] = rail_height
         hf_raw[(width_pixels//cfg.num_rails + i)::width_pixels//cfg.num_rails] = rail_height
     # round off the heights to the nearest vertical step
     return np.rint(hf_raw).astype(np.int16)
@@ -483,7 +483,7 @@ def horizontal_trenches(difficulty:float, cfg: hf_terrains_cfg.HfHorizontalTrenc
     length_pixels = int(cfg.size[1] / cfg.horizontal_scale)
     hf_raw = np.zeros((width_pixels, length_pixels))
     for i in range(trench_width):
-        hf_raw[:, int(width_pixels//cfg.num_trenches + i)::int(width_pixels//cfg.num_trenches)] = -100
+        # hf_raw[:, int(width_pixels//cfg.num_trenches + i)::int(width_pixels//cfg.num_trenches)] = -100
         hf_raw[int(width_pixels//cfg.num_trenches + i)::int(width_pixels//cfg.num_trenches)] = -100
 
     return np.rint(hf_raw).astype(np.int16)

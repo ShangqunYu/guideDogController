@@ -31,8 +31,9 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
             rail_thickness=0.25, 
             num_rails=3,
             horizontal_scale=0.005,
-
         ),
+        # "trenches_left": terrain_gen.HfHorizontalTrenchesTerrainCfg(
+        #     proportion=0.1, trench_width_range=(0.06, 0.15), num_trenches = 2.0, horizontal_scale=0.03),
         "random_rough_left": terrain_gen.HfRandomUniformTerrainCfg(
             proportion=0.2, noise_range=(0.02, 0.06), noise_step=0.01, border_width=0.25
         ),
@@ -44,8 +45,7 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
             border_width=1.0,
             holes=False,
         ),
-        "trenches_left": terrain_gen.HfHorizontalTrenchesTerrainCfg(
-            proportion=0.1, trench_width_range=(0.1, 0.1), num_trenches = 3.0),
+        
         "pyramid_stairs": terrain_gen.MeshPyramidStairsTerrainCfg(
             proportion=0.2,
             step_height_range=(0.05, 0.18),
@@ -54,8 +54,7 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
             border_width=1.0,
             holes=False,
         ),
-        "trenches_right": terrain_gen.HfHorizontalTrenchesTerrainCfg(
-            proportion=0.1, trench_width_range=(0.1, 0.1), num_trenches = 3.0),
+        
         "pyramid_stairs_inv_right": terrain_gen.MeshInvertedPyramidStairsTerrainCfg(
             proportion=0.2,
             step_height_range=(0.05, 0.18),
@@ -67,6 +66,8 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
         "random_rough_right": terrain_gen.HfRandomUniformTerrainCfg(
             proportion=0.2, noise_range=(0.02, 0.06), noise_step=0.01, border_width=0.25
         ),
+        "trenches_right": terrain_gen.HfHorizontalTrenchesTerrainCfg(
+            proportion=0.1, trench_width_range=(0.05, 0.15), num_trenches = 2.0, horizontal_scale=0.05),
         "horizontal_rails_right": terrain_gen.HfHorizontalRailsTerrainCfg(
             proportion=0.2, 
             rail_height_range=(0.04, 0.07), 
@@ -81,6 +82,13 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
         "hf_pyramid_slope_inv_right": terrain_gen.HfInvertedPyramidSlopedTerrainCfg(
             proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
         )        
+        # "star": terrain_gen.MeshStarTerrainCfg(
+        #     proportion=1.0,
+        #     num_bars = 3,
+        #     bar_width_range = (0.1, 0.2),
+        #     bar_height_range = (0.05, 0.2),
+        #     platform_width=1.0,
+        # )
     },
 )
 
