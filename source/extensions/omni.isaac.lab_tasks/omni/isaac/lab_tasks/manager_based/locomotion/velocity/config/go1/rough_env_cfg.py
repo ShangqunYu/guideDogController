@@ -130,7 +130,7 @@ class UnitreeGo1RewardsCfg:
     base_height = RewTerm(
         func=mdp.base_height_l2,
         weight=-0.001,
-        params={"target_height": 31.0},
+        params={"target_height": 30.0},
     )
 
 
