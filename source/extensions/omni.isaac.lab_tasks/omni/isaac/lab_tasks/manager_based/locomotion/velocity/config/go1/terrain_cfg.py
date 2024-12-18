@@ -19,6 +19,33 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
     slope_threshold=0.75,
     use_cache=False,
     sub_terrains={
+        "hf_pyramid_slope_inv_left": terrain_gen.HfInvertedPyramidSlopedTerrainCfg(
+            proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
+        ),
+        "hf_pyramid_slope_left": terrain_gen.HfPyramidSlopedTerrainCfg(
+            proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
+        ),
+        "horizontal_rails_left": terrain_gen.HfHorizontalRailsTerrainCfg(
+            proportion=0.2, 
+            rail_height_range=(0.04, 0.07), 
+            rail_thickness=0.25, 
+            num_rails=3,
+            horizontal_scale=0.005,
+        ),
+        # "trenches_left": terrain_gen.HfHorizontalTrenchesTerrainCfg(
+        #     proportion=0.1, trench_width_range=(0.06, 0.15), num_trenches = 2.0, horizontal_scale=0.03),
+        "random_rough_left": terrain_gen.HfRandomUniformTerrainCfg(
+            proportion=0.2, noise_range=(0.02, 0.06), noise_step=0.01, border_width=0.25
+        ),
+        "pyramid_stairs_inv_left": terrain_gen.MeshInvertedPyramidStairsTerrainCfg(
+            proportion=0.2,
+            step_height_range=(0.05, 0.18),
+            step_width=0.3,
+            platform_width=3.0,
+            border_width=1.0,
+            holes=False,
+        ),
+        
         "pyramid_stairs": terrain_gen.MeshPyramidStairsTerrainCfg(
             proportion=0.2,
             step_height_range=(0.05, 0.18),
@@ -27,7 +54,8 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
             border_width=1.0,
             holes=False,
         ),
-        "pyramid_stairs_inv": terrain_gen.MeshInvertedPyramidStairsTerrainCfg(
+        
+        "pyramid_stairs_inv_right": terrain_gen.MeshInvertedPyramidStairsTerrainCfg(
             proportion=0.2,
             step_height_range=(0.05, 0.18),
             step_width=0.3,
@@ -35,26 +63,32 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
             border_width=1.0,
             holes=False,
         ),
-        "random_rough": terrain_gen.HfRandomUniformTerrainCfg(
-            proportion=0.2, noise_range=(0.01, 0.1), noise_step=0.01, border_width=0.25
+        "random_rough_right": terrain_gen.HfRandomUniformTerrainCfg(
+            proportion=0.2, noise_range=(0.02, 0.06), noise_step=0.01, border_width=0.25
         ),
-        # "wave": terrain_gen.HfWaveTerrainCfg(
-        #     proportion=0.1, amplitude_range=(0.01, 0.33), num_waves = 2.0
-        # ),
-        "horizontal_rails": terrain_gen.HfHorizontalRailsTerrainCfg(
+        "trenches_right": terrain_gen.HfHorizontalTrenchesTerrainCfg(
+            proportion=0.1, trench_width_range=(0.05, 0.15), num_trenches = 2.0, horizontal_scale=0.05),
+        "horizontal_rails_right": terrain_gen.HfHorizontalRailsTerrainCfg(
             proportion=0.2, 
-            rail_height_range=(0.05, 0.1), 
-            rail_thickness=0.2, 
+            rail_height_range=(0.04, 0.07), 
+            rail_thickness=0.25, 
             num_rails=3,
             horizontal_scale=0.005,
 
         ),
-        "hf_pyramid_slope": terrain_gen.HfPyramidSlopedTerrainCfg(
+        "hf_pyramid_slope_right": terrain_gen.HfPyramidSlopedTerrainCfg(
             proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
         ),
-        "hf_pyramid_slope_inv": terrain_gen.HfInvertedPyramidSlopedTerrainCfg(
+        "hf_pyramid_slope_inv_right": terrain_gen.HfInvertedPyramidSlopedTerrainCfg(
             proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
-        ),
+        )        
+        # "star": terrain_gen.MeshStarTerrainCfg(
+        #     proportion=1.0,
+        #     num_bars = 3,
+        #     bar_width_range = (0.1, 0.2),
+        #     bar_height_range = (0.05, 0.2),
+        #     platform_width=1.0,
+        # )
     },
 )
 
@@ -70,14 +104,17 @@ UNITREE_GO1_FLAT_TERRAIN_CFG = TerrainGeneratorCfg(
     sub_terrains={
         "horizontal_rails": terrain_gen.HfHorizontalRailsTerrainCfg(
             proportion=1.0, 
-            rail_height_range=(0.04, 0.20), 
+            rail_height_range=(0.04, 0.04), 
             rail_thickness=0.2, 
             num_rails=5,
             horizontal_scale=0.005,
         ),
-        "wave": terrain_gen.HfWaveTerrainCfg(
-            proportion=1.0, amplitude_range=(0.05, 0.33), num_waves = 2.0
-        )
+        "random_rough": terrain_gen.HfRandomUniformTerrainCfg(
+            proportion=1.0, noise_range=(0.02, 0.06), noise_step=0.01, border_width=0.25
+        ),
+        # "wave": terrain_gen.HfWaveTerrainCfg(
+        #     proportion=1.0, amplitude_range=(0.05, 0.33), num_waves = 2.0
+        # )
     },
 )
 """Rough terrains configuration."""

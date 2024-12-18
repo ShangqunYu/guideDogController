@@ -466,7 +466,24 @@ def horizontal_rails(difficulty: float, cfg: hf_terrains_cfg.HfHorizontalRailsTe
 
     hf_raw = np.zeros((width_pixels, length_pixels))
     for i in range(rail_pixels):
+        # hf_raw[:, (width_pixels//cfg.num_rails + i)::width_pixels//cfg.num_rails] = rail_height
         hf_raw[(width_pixels//cfg.num_rails + i)::width_pixels//cfg.num_rails] = rail_height
-    # breakpoint()
     # round off the heights to the nearest vertical step
+    return np.rint(hf_raw).astype(np.int16)
+
+@height_field_to_mesh
+def horizontal_trenches(difficulty:float, cfg: hf_terrains_cfg.HfHorizontalTrenchesTerrainCfg) -> np.ndarray:
+    if cfg.num_trenches <= 0:
+        raise ValueError(f"Number of trenches must be a positive integer. Got: {cfg.num_trenches}.")
+    
+    trench_width = cfg.trench_width_range[0] + difficulty * (cfg.trench_width_range[1] - cfg.trench_width_range[0])
+    trench_width = int(trench_width / cfg.horizontal_scale)
+
+    width_pixels = int(cfg.size[0] / cfg.horizontal_scale)
+    length_pixels = int(cfg.size[1] / cfg.horizontal_scale)
+    hf_raw = np.zeros((width_pixels, length_pixels))
+    for i in range(trench_width):
+        # hf_raw[:, int(width_pixels//cfg.num_trenches + i)::int(width_pixels//cfg.num_trenches)] = -100
+        hf_raw[int(width_pixels//cfg.num_trenches + i)::int(width_pixels//cfg.num_trenches)] = -100
+
     return np.rint(hf_raw).astype(np.int16)

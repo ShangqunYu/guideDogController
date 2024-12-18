@@ -21,7 +21,7 @@ class HfTerrainBaseCfg(SubTerrainBaseCfg):
     The border width is subtracted from the :obj:`size` of the terrain. If non-zero, it must be
     greater than or equal to the :obj:`horizontal scale`.
     """
-    horizontal_scale: float = 0.1
+    horizontal_scale: float = 0.005
     """The discretization of the terrain along the x and y axes (in m). Defaults to 0.1."""
     vertical_scale: float = 0.005
     """The discretization of the terrain along the z axis (in m). Defaults to 0.005."""
@@ -176,3 +176,11 @@ class HfHorizontalRailsTerrainCfg(HfTerrainBaseCfg):
     """The thickness of the rails (in m)."""
     num_rails = 3.0
     """The number of rails to generate. Defaults to 3.0."""
+
+@configclass
+class HfHorizontalTrenchesTerrainCfg(HfTerrainBaseCfg):
+    function = hf_terrains.horizontal_trenches
+
+    trench_width_range: tuple[float, float] = MISSING
+
+    num_trenches = 3.0

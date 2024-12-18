@@ -36,4 +36,5 @@ from .hf_terrains_cfg import (
     HfTerrainBaseCfg,
     HfWaveTerrainCfg,
     HfHorizontalRailsTerrainCfg,
+    HfHorizontalTrenchesTerrainCfg,
 )

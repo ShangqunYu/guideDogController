@@ -46,6 +46,7 @@ import omni.isaac.lab_tasks.manager_based.locomotion.velocity.mdp as mdp
 ##
 from omni.isaac.lab_assets.unitree import UNITREE_GO1_CFG  # isort: skip
 
+# breakpoint()
 @configclass
 class UnitreeGo1SceneCfg(MySceneCfg):
     terrain = TerrainImporterCfg(
@@ -77,16 +78,16 @@ class UnitreeGo1SceneCfg(MySceneCfg):
             attach_yaw_only=True,
             offset=RayCasterCameraCfg.OffsetCfg(
                 pos=(0.245+0.027, 0.0075, 0.072+0.02),  # imported from Isaacgym
-                rot=(1,0,0,0), # previously (0, 0, 1, 0) in "ros" convention 
+                rot=(0.97,0,0.26,0), # previously (0, 0, 1, 0) in "ros" convention 
                 convention="world"),
             data_types=["distance_to_image_plane"],
             debug_vis=False,
-            max_distance=10.0,
+            max_distance=3.0,
             pattern_cfg=patterns.PinholeCameraPatternCfg(
-                focal_length=24.0,
-                horizontal_aperture=20.955,
-                height=58,
-                width=87,
+                focal_length=0.193,
+                horizontal_aperture=0.372, # 20.995
+                height=int(58),
+                width=int(87),
             ),
         )
     
@@ -102,48 +103,36 @@ class UnitreeGo1RewardsCfg:
 
     # -- task
     track_lin_vel_xy_exp = RewTerm(
-        func=mdp.track_lin_vel_xy_exp, weight=5.0, params={"command_name": "base_velocity", "std": math.sqrt(0.25)}
+        func=mdp.track_lin_vel_xy_exp, weight=4.5, params={"command_name": "base_velocity", "std": math.sqrt(0.25)}
     )
     track_ang_vel_z_exp = RewTerm(
-        func=mdp.track_ang_vel_z_exp, weight=2.0, params={"command_name": "base_velocity", "std": math.sqrt(0.25)}
+        func=mdp.track_ang_vel_z_exp, weight=1.5, params={"command_name": "base_velocity", "std": math.sqrt(0.25)}
     )
     # -- penalties
-    lin_vel_z_l2 = RewTerm(func=mdp.lin_vel_z_l2, weight=-1.0)
+    lin_vel_z_l2 = RewTerm(func=mdp.lin_vel_z_l2, weight=-0.5)
     ang_vel_xy_l2 = RewTerm(func=mdp.ang_vel_xy_l2, weight=-0.05)
     dof_torques_l2 = RewTerm(func=mdp.joint_torques_l2, weight=-1.0e-5)
     dof_acc_l2 = RewTerm(func=mdp.joint_acc_l2, weight=-2.5e-7)
     action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.01)
-    # feet_air_time = RewTerm(
-    #     func=mdp.feet_air_time,
-    #     weight=0.1, # prev 0.25
-    #     params={
-    #         "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_foot"),
-    #         "command_name": "base_velocity",
-    #         "threshold": 0.5,
-    #     },
-    # )
     termination = RewTerm(
         func=mdp.is_terminated,
         weight = -1.0
     )
-    undesired_contacts = RewTerm(
-        func=mdp.undesired_contacts,
-        weight=-2.0,
-        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_thigh"), "threshold": 1.0},
+    orientation = RewTerm(
+        func = mdp.flat_orientation_l2,
+        weight = -1.0
+    )    
+    smoothness = RewTerm(
+        func = mdp.action_smoothness_penalty,
+        weight = -0.05
     )
-    # -- optional penalties
-    # flat_orientation_l2 = RewTerm(func=mdp.flat_orientation_l2, weight=1.0)
-    # dof_pos_limits = RewTerm(func=mdp.joint_pos_limits, weight=1.0)
-    collision = RewTerm(
-        func=mdp.collision, 
-        weight=-.5,
-        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*")}
-    )
+
     base_height = RewTerm(
         func=mdp.base_height_l2,
         weight=-0.001,
-        params={"target_height": 29.0},
+        params={"target_height": 30.0},
     )
+
 
 @configclass
 class UnitreeGo1ObservationsCfg(ObservationsCfg):
@@ -209,7 +198,7 @@ class UnitreeGo1CommandsCfg:
         heading_control_stiffness=0.5,
         debug_vis=True,
         ranges=mdp.UniformVelocityCommandCfg.Ranges(
-            lin_vel_x=(0.5, 1.2), lin_vel_y=(-1.0, 1.0), ang_vel_z=(-1.0, 1.0), heading=(-math.pi, math.pi)
+            lin_vel_x=(-1.0, 1.0), lin_vel_y=(-1.0, 1.0), ang_vel_z=(-1.0, 1.0), heading=(-math.pi, math.pi)
         ),
     )
 
@@ -233,9 +222,6 @@ class UnitreeGo1RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         self.scene.robot = UNITREE_GO1_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
         self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/trunk"
         # scale down the terrains because the robot is small
-        # self.scene.terrain.terrain_generator.sub_terrains["boxes"].grid_height_range = (0.025, 0.1)
-        # self.scene.terrain.terrain_generator.sub_terrains["random_rough"].noise_range = (0.01, 0.06)
-        # self.scene.terrain.terrain_generator.sub_terrains["random_rough"].noise_step = 0.01
 
         # reduce action scale
         self.actions.joint_pos.scale = 0.25
@@ -281,7 +267,7 @@ class UnitreeGo1CommandsCfg_PLAY:
         debug_vis=True,
         # want robots to always move forward
         ranges=mdp.UniformVelocityCommandCfg.Ranges(
-            lin_vel_x=(1.0, 1.0), lin_vel_y=(0, 0), ang_vel_z=(0, 0), heading=(0, 0)
+            lin_vel_x=(1.0, 1.5), lin_vel_y=(0, 0), ang_vel_z=(-1, 1), heading=(0, 0)
         ),
     )
 

@@ -15,14 +15,15 @@ from omni.isaac.lab_tasks.utils.wrappers.rsl_rl import (
 @configclass
 class UnitreeGo1RoughPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     num_steps_per_env = 24
-    max_iterations = 10000 # previously 4000
-    save_interval = 100
+    max_iterations = 15000 # previously 4000
+    save_interval = 200
+    resume = True
     experiment_name = "unitree_go1_rough"
-    empirical_normalization = False    
+    empirical_normalization = True # True for training 
     policy = RslRlPpoActorCriticCfg(
-        class_name="ActorCriticDepth", # TODO: implement ActorCriticDepth, then switch to it.
+        class_name="ActorCriticDepth",
         init_noise_std=1.0,
-        actor_hidden_dims=[256, 256, 256],
+        actor_hidden_dims=[512, 256, 128], # prev [256, 256, 256] works quite okay, [256, 128, 64] too small
         critic_hidden_dims=[512, 256, 128],
         activation="elu",
     )
@@ -42,6 +43,8 @@ class UnitreeGo1RoughPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     )
     depth_backbone = True
     depth_backbone_cfg = {
+        "width": int(58),
+        "height": int(87),
         "FC_output_dims": 32,
         "hidden_dims": 512,
         "learning_rate": 1.0e-3,
@@ -54,7 +57,9 @@ class UnitreeGo1FlatPPORunnerCfg(UnitreeGo1RoughPPORunnerCfg):
     def __post_init__(self):
         super().__post_init__()
         self.depth_backbone = True
-        self.max_iterations = 10000
+        self.max_iterations = 2500
         self.experiment_name = "unitree_go1_flat"
+        self.empirical_normalization = True
         # self.policy.actor_hidden_dims = [128, 128, 128]
         # self.policy.critic_hidden_dims = [128, 128, 128]
+        

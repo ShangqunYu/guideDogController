@@ -23,6 +23,7 @@ class ActorCriticDepth(nn.Module):
         num_actor_obs,
         num_critic_obs,
         num_actions,
+        depth_image_size,
         actor_hidden_dims=[256, 256, 256],
         critic_hidden_dims=[256, 256, 256],
         activation="elu",
@@ -37,10 +38,13 @@ class ActorCriticDepth(nn.Module):
         super().__init__()
         activation = get_activation(activation)
 
+        self.num_actor_obs = num_actor_obs
+        self.num_critic_obs = num_critic_obs
+
         mlp_input_dim_a = num_actor_obs
         mlp_input_dim_c = num_critic_obs
 
-        depth_image_compressor = DepthOnlyFCBackbone58x87(output_dim=32, output_activation=activation)
+        depth_image_compressor = DepthOnlyFCBackbone58x87(output_dim=32, depth_image_size=depth_image_size, output_activation=activation)
         
         # flatten the depth image to depth latent
         self.depth_backbone = RecurrentDepthBackbone(
@@ -117,6 +121,7 @@ class ActorCriticDepth(nn.Module):
 
     def act(self, depth_image, observations, **kwargs):
         self.update_distribution(depth_image, observations)
+        # breakpoint()
         return self.distribution.sample()
 
     def get_actions_log_prob(self, actions):
