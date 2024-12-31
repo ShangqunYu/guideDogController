@@ -45,15 +45,21 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
             border_width=1.0,
             holes=False,
         ),
-        
-        "pyramid_stairs": terrain_gen.MeshPyramidStairsTerrainCfg(
+        "floating_platform": terrain_gen.MeshFloatingPlatformTerrainCfg(
             proportion=0.2,
-            step_height_range=(0.05, 0.18),
-            step_width=0.3,
-            platform_width=3.0,
-            border_width=1.0,
-            holes=False,
+            step_height_range = (0.05, 0.18),
+            step_width= 0.3,   
+            platform_width = 3.0,
+            border_width = 1.0
         ),
+        # "pyramid_stairs": terrain_gen.MeshPyramidStairsTerrainCfg(
+        #     proportion=0.2,
+        #     step_height_range=(0.05, 0.18),
+        #     step_width=0.3,
+        #     platform_width=3.0,
+        #     border_width=1.0,
+        #     holes=False,
+        # ),
         
         "pyramid_stairs_inv_right": terrain_gen.MeshInvertedPyramidStairsTerrainCfg(
             proportion=0.2,
@@ -81,14 +87,7 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
         ),
         "hf_pyramid_slope_inv_right": terrain_gen.HfInvertedPyramidSlopedTerrainCfg(
             proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
-        )        
-        # "star": terrain_gen.MeshStarTerrainCfg(
-        #     proportion=1.0,
-        #     num_bars = 3,
-        #     bar_width_range = (0.1, 0.2),
-        #     bar_height_range = (0.05, 0.2),
-        #     platform_width=1.0,
-        # )
+        )
     },
 )
 
@@ -112,9 +111,6 @@ UNITREE_GO1_FLAT_TERRAIN_CFG = TerrainGeneratorCfg(
         "random_rough": terrain_gen.HfRandomUniformTerrainCfg(
             proportion=1.0, noise_range=(0.02, 0.06), noise_step=0.01, border_width=0.25
         ),
-        # "wave": terrain_gen.HfWaveTerrainCfg(
-        #     proportion=1.0, amplitude_range=(0.05, 0.33), num_waves = 2.0
-        # )
     },
 )
 """Rough terrains configuration."""

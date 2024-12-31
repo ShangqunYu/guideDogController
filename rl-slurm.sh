@@ -16,4 +16,4 @@ module load conda/latest
 conda activate isaaclab
 
 # Execute the Python script with the specific prompt
-python -u source/standalone/workflows/rsl_rl/train.py --task Isaac-Velocity-Rough-Unitree-Go1-v0 --num_envs=3000 --headless
+python -u source/standalone/workflows/rsl_rl/train.py --task Isaac-Velocity-Rough-Unitree-Go1-v0 --num_envs=2750 --headless
