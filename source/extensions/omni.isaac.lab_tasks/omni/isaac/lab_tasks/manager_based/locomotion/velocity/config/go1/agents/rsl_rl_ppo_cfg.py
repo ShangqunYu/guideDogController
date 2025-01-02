@@ -17,7 +17,7 @@ class UnitreeGo1RoughPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     num_steps_per_env = 24
     max_iterations = 18000 # previously 4000
     save_interval = 200
-    resume = False
+    resume = True
     experiment_name = "unitree_go1_rough"
     empirical_normalization = True # True for training 
     policy = RslRlPpoActorCriticCfg(
