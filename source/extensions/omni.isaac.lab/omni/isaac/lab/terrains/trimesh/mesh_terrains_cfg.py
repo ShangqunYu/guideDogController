@@ -267,3 +267,21 @@ class MeshRepeatedCylindersTerrainCfg(MeshRepeatedObjectsTerrainCfg):
     """The box curriculum parameters at the start of the curriculum."""
     object_params_end: ObjectCfg = MISSING
     """The box curriculum parameters at the end of the curriculum."""
+
+@configclass
+class MeshFloatingPlatformTerrainCfg(SubTerrainBaseCfg):
+    function = mesh_terrains.floating_platform_terrain
+    horizontal_scale: float = 0.03
+    """The horizontal scale of the terrain."""
+    
+    step_height_range: tuple[float, float] = (0.05, 0.18)
+    """The minimum and maximum height of the steps (in m)."""
+
+    step_width: float = 0.3
+
+    platform_width: float = 3.0
+    """The width of the square platform at the center of the terrain. Defaults to 3.0."""
+
+    border_width: float = 1.0
+    """The width of the border around the terrain (in m). Defaults to 0.0."""
+

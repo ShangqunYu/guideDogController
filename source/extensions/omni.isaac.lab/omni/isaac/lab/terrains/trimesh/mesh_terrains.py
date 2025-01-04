@@ -850,3 +850,48 @@ def repeated_objects_terrain(
     meshes_list.append(platform)
 
     return meshes_list, origin
+
+
+def floating_platform_terrain(
+    difficulty: float, cfg: mesh_terrains_cfg.MeshFloatingPlatformTerrainCfg
+) -> tuple[list[trimesh.Trimesh], np.ndarray]:
+    difficulty *= 5
+    step_height = cfg.step_height_range[0] + difficulty * (cfg.step_height_range[1] - cfg.step_height_range[0]) / 5
+    step_width = cfg.step_width
+    meshes_list = list()
+
+    num_steps = int((cfg.size[0] - 2 * cfg.border_width - cfg.platform_width) / (2 * step_width))
+
+    # generate the steps:
+    for step in range(num_steps):
+
+        # make the outer ring
+        ring_center = (0.5 * cfg.size[0], 0.5 * cfg.size[1], step_height * (step + 0.5))
+        outer_ring_outer_size = (cfg.size[0] - 2*cfg.border_width - 2*step * step_width, cfg.size[1] - 2*cfg.border_width - 2*step * step_width) 
+        outer_ring_inner_size = (cfg.size[0] - 2*cfg.border_width - 2*(step + 0.1) * step_width, cfg.size[1] - 2*cfg.border_width - 2*(step + 0.1) * step_width)
+        meshes_list += make_border(outer_ring_outer_size, outer_ring_inner_size, step_height, ring_center)
+
+        # make the inner ring
+        ring_center = (0.5 * cfg.size[0], 0.5 * cfg.size[1], step_height * (step + 0.5))
+        inner_ring_outer_size = (outer_ring_inner_size[0] - 2*min(0.4, 0.1 * difficulty)*step_width, outer_ring_inner_size[1] - 2*min(0.4, 0.1 * difficulty)*step_width)
+        inner_ring_inner_size = (outer_ring_inner_size[0] - 2*(0.9 - min(0.4, 0.1 * difficulty)) * step_width, outer_ring_inner_size[1] - 2*(0.9 - min(0.4, 0.1 * difficulty)) * step_width)
+        meshes_list += make_border(inner_ring_outer_size, inner_ring_inner_size, step_height, ring_center)
+    
+    terrain_height = 1.0
+    # Generate the ground
+    dim = (cfg.size[0], cfg.size[1], terrain_height)
+    pos = (0.5 * cfg.size[0], 0.5 * cfg.size[1], -terrain_height / 2)
+    ground = trimesh.creation.box(dim, trimesh.transformations.translation_matrix(pos))
+    meshes_list.append(ground)
+
+    # generate a platform in the middle
+    dim = (cfg.platform_width, cfg.platform_width, step_height)
+    pos = (0.5 * cfg.size[0], 0.5 * cfg.size[1], step_height * (num_steps + 0.5))
+    platform = trimesh.creation.box(dim, trimesh.transformations.translation_matrix(pos))
+    meshes_list.append(platform)
+
+    # specify the origin of the terrain
+    origin = np.asarray([pos[0], pos[1], step_height * (num_steps + 0.5)])
+
+    # breakpoint()
+    return meshes_list, origin
