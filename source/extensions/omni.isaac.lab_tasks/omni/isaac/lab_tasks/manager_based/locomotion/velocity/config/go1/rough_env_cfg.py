@@ -78,7 +78,7 @@ class UnitreeGo1SceneCfg(MySceneCfg):
             attach_yaw_only=True,
             offset=RayCasterCameraCfg.OffsetCfg(
                 pos=(0.245+0.027, 0.0075, 0.072+0.02),  # imported from Isaacgym
-                rot=(0.97,0,0.26,0), # previously (0, 0, 1, 0) in "ros" convention 
+                rot=(0.924,0,0.383,0), # previously (0, 0, 1, 0) in "ros" convention 
                 convention="world"),
             data_types=["distance_to_image_plane"],
             debug_vis=False,
