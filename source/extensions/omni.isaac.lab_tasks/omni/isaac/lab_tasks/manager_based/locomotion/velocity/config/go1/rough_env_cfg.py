@@ -267,7 +267,7 @@ class UnitreeGo1CommandsCfg_PLAY:
         debug_vis=True,
         # want robots to always move forward
         ranges=mdp.UniformVelocityCommandCfg.Ranges(
-            lin_vel_x=(1.0, 1.5), lin_vel_y=(0, 0), ang_vel_z=(-1, 1), heading=(0, 0)
+            lin_vel_x=(0.7, 0.7), lin_vel_y=(0, 0), ang_vel_z=(-1, 1), heading=(0, 0)
         ),
     )
 
