@@ -45,7 +45,14 @@ UNITREE_GO1_ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
             border_width=1.0,
             holes=False,
         ),
-        "floating_platform": terrain_gen.MeshFloatingPlatformTerrainCfg(
+        # "floating_platform": terrain_gen.MeshFloatingPlatformTerrainCfg(
+        #     proportion=0.2,
+        #     step_height_range = (0.05, 0.18),
+        #     step_width= 0.3,   
+        #     platform_width = 3.0,
+        #     border_width = 1.0
+        # ),
+        "pyramid_stairs": terrain_gen.MeshPyramidStairsTerrainCfg(
             proportion=0.2,
             step_height_range = (0.05, 0.18),
             step_width= 0.3,   
